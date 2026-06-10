@@ -1,0 +1,524 @@
+
+/* ═══════════════════════════════════════════════════════════════════
+   ScrollSaw Designer — styles.css
+   ───────────────────────────────────────────────────────────────────
+   WHAT THIS FILE DOES:
+   Controls every visual aspect of the app — colors, fonts, layout,
+   spacing, and sizing. No logic lives here; that's all in app.js.
+
+   HOW TO CHANGE THE LOOK:
+   - Colors/theme → edit the CSS variables in the :root block below
+   - Fonts        → swap the Google Fonts @import URL + font-family vars
+   - Sidebar width → change --sidebar-w
+   - Header height → change --header-h (also affects layout math)
+
+   FILE STRUCTURE (in order):
+   1. Google Fonts import
+   2. CSS custom properties (design tokens / variables)
+   3. Reset / base styles
+   4. Header bar
+   5. Main layout (sidebar + canvas area)
+   6. Sidebar panels and form controls
+   7. Canvas wrapper
+   8. Status bar (footer)
+   9. Scrollbar styling
+   ═══════════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────
+   1. FONTS
+   Share Tech Mono → monospace readouts (coords, labels)
+   Barlow Condensed → UI labels, titles, buttons
+   To swap fonts: change the URL below AND the font-family
+   variables in :root. Pick from fonts.google.com
+   ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700&display=swap');
+/* ─────────────────────────────────────────────
+   2. CSS CUSTOM PROPERTIES (Design Tokens)
+   These variables are used everywhere below.
+   Changing a value here updates it globally.
+
+   COLOR GUIDE:
+   --bg-deep    = darkest background (canvas area, body)
+   --bg-panel   = slightly lighter (sidebar, header)
+   --bg-canvas  = the area behind the work grid
+   --border     = subtle dividing lines between panels
+   --accent     = golden orange highlight color
+   --accent-dim = dimmer version for hover states
+   --danger     = red, used for the clear/delete button
+   --text-bright = main readable text
+   --text-mid   = secondary / label text
+   --text-dim   = very subtle text (credits, placeholders)
+   --grid-minor = color of minor grid lines (on canvas)
+   --grid-major = color of major grid lines (on canvas)
+   ───────────────────────────────────────────── */
+:root {
+    --bg-deep: #141618;
+    --bg-panel: #1e2124;
+    --bg-canvas: #0e1012;
+    --border: #2e3338;
+    --accent: #f0a500;
+    --accent-dim: #a87200;
+    --danger: #c0392b;
+    --text-bright: #e8e4dc;
+    --text-mid: #8a8f96;
+    --text-dim: #4a4f56;
+    /* Grid line colors — used in app.js via GridRenderer._drawGrid()
+     These are CSS variables but referenced as literal strings in JS.
+     If you change them here, update the matching strings in app.js too. */
+    --grid-minor: rgba(80, 160, 200, 0.18);
+    --grid-major: rgba(80, 160, 200, 0.42);
+    --grid-origin: rgba(240, 165, 0, 0.75);
+    /* Font stacks — referenced throughout */
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-ui: 'Barlow Condensed', sans-serif;
+    --radius: 4px; /* border-radius used on inputs/buttons */
+    /* Layout dimensions — change here to resize major sections */
+    --sidebar-w: 240px; /* width of the left panel */
+    --header-h: 52px; /* height of the top bar */
+    --footer-h: 28px; /* height of the status bar */
+}
+
+
+/* ─────────────────────────────────────────────
+   3. RESET & BASE STYLES
+   box-sizing: border-box means padding/border
+   are included in element width/height (sane default).
+   overflow:hidden on html/body prevents page scrolling —
+   all scrolling happens within individual panels.
+   ───────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* No page scroll — layout fills the viewport */
+}
+
+body {
+    font-family: var(--font-ui);
+    background: var(--bg-deep);
+    color: var(--text-bright);
+    display: flex;
+    flex-direction: column; /* Stack: header → main → footer vertically */
+    font-size: 14px;
+}
+
+
+/* ─────────────────────────────────────────────
+   4. HEADER BAR
+   Fixed height bar across the top.
+   flex-shrink:0 prevents it from collapsing.
+   The bottom border uses --accent color to
+   give the industrial "warning stripe" look.
+   ───────────────────────────────────────────── */
+.app-header {
+    height: var(--header-h);
+    min-height: var(--header-h);
+    background: var(--bg-panel);
+    border-bottom: 2px solid var(--accent); /* golden accent line */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.2rem;
+    gap: 1rem;
+    flex-shrink: 0; /* Must not shrink — always full height */
+}
+
+/* Brand area (icon + title + subtitle) */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Spinning gear icon — purely decorative CSS animation */
+.brand-icon {
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1;
+    animation: spin-slow 12s linear infinite;
+}
+/* To stop the gear spinning: remove the animation line above */
+@keyframes spin-slow {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.header-brand h1 {
+    font-family: var(--font-ui);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-bright);
+    line-height: 1.1;
+}
+
+.subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+}
+
+/* Tool buttons row in the header
+   Active state (current tool) = gold background
+   Danger state (clear button) = red on hover */
+.header-tools {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.tool-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    background: var(--bg-deep);
+    color: var(--text-mid);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    /* Default hover */
+    .tool-btn:hover {
+        background: var(--border);
+        color: var(--text-bright);
+    }
+    /* Active tool (set by ToolManager.activate() in app.js) */
+    .tool-btn.active {
+        background: var(--accent);
+        color: #000;
+        border-color: var(--accent);
+    }
+    /* Danger button hover (clear all) */
+    .tool-btn.danger:hover {
+        background: var(--danger);
+        color: #fff;
+        border-color: var(--danger);
+    }
+
+
+/* ─────────────────────────────────────────────
+   5. MAIN LAYOUT
+   .app-body fills remaining height between
+   header and footer using flex: 1.
+   It's a horizontal row: sidebar | canvas.
+   ───────────────────────────────────────────── */
+.app-body {
+    flex: 1; /* Fill all vertical space between header and footer */
+    display: flex; /* Side-by-side: sidebar then canvas */
+    overflow: hidden; /* Contain children; scrolling handled internally */
+}
+
+
+/* ─────────────────────────────────────────────
+   6. SIDEBAR (left panel)
+   Fixed width, scrollable vertically.
+   Contains stacked .panel sections.
+   ───────────────────────────────────────────── */
+.sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w); /* Never shrink below this */
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; /* Scroll if content overflows vertically */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+    /* Thin custom scrollbar for the sidebar */
+    .sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 2px;
+    }
+
+/* Individual collapsible-style panel within the sidebar.
+   Each .panel is a logical group of controls.
+   To add a new group of controls: copy a <section class="panel"> block
+   in index.html and add your inputs inside it. */
+.panel {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Section heading inside a panel (e.g. "Work Area", "Grid") */
+.panel-title {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent); /* Gold color makes section titles stand out */
+    margin-bottom: 0.75rem;
+}
+
+/* Label + input stacked vertically
+   The <label> wraps both the text and the <input> in index.html */
+.field-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--text-mid);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.65rem;
+}
+
+/* Shared style for <input type="number"> and <select> in sidebar */
+.field-input {
+    background: var(--bg-deep);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-bright);
+    font-family: var(--font-mono); /* Monospace for numerical alignment */
+    font-size: 0.85rem;
+    padding: 0.3rem 0.5rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+}
+    /* Gold border glow when input is focused */
+    .field-input:focus {
+        border-color: var(--accent);
+    }
+    /* Style dropdown options to match dark theme */
+    .field-input option {
+        background: var(--bg-panel);
+    }
+
+/* Zoom row: [ - ] [ 100% ] [ + ]
+   The zoom percentage label (#zoom-label) is updated by
+   updateZoomLabel() in app.js */
+.zoom-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+}
+
+.zoom-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    background: var(--bg-deep);
+    color: var(--text-bright);
+    border-radius: var(--radius);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+    .zoom-btn:hover {
+        background: var(--accent);
+        color: #000;
+        border-color: var(--accent);
+    }
+
+/* The "100%" text between zoom buttons */
+.zoom-val {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    min-width: 42px;
+    text-align: center;
+}
+
+/* Full-width action button (e.g. "Fit to Window") */
+.action-btn {
+    width: 100%;
+    padding: 0.45rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--accent-dim);
+    color: var(--accent);
+    border-radius: var(--radius);
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    transition: background 0.15s, color 0.15s;
+}
+
+    .action-btn:hover {
+        background: var(--accent);
+        color: #000;
+    }
+
+/* Cursor coordinate display rows (X / Y readout)
+   Values updated by mousemove handler in app.js */
+.coord-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+    .coord-row:last-child {
+        border-bottom: none;
+    }
+
+.coord-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.coord-val {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--accent); /* Gold = live data readout */
+}
+
+/* Developer note panel — slightly darker background to visually
+   separate it as informational rather than interactive.
+   Safe to remove this entire section if you don't need it. */
+.note-panel {
+    background: #191c1f;
+}
+
+    .note-panel p {
+        font-size: 0.78rem;
+        color: var(--text-mid);
+        line-height: 1.5;
+        margin-bottom: 0.6rem;
+    }
+
+    .note-panel ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .note-panel li {
+        font-size: 0.75rem;
+        color: var(--text-mid);
+        padding-left: 0.8rem;
+        position: relative;
+    }
+        /* Triangle bullet via ::before pseudo-element */
+        .note-panel li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-dim);
+        }
+    /* Inline code style (used in the note panel) */
+    .note-panel code {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--accent);
+        background: rgba(240,165,0,0.08);
+        padding: 0 3px;
+        border-radius: 2px;
+    }
+
+
+/* ─────────────────────────────────────────────
+   7. CANVAS WRAPPER & CANVAS
+   .canvas-wrapper fills the remaining horizontal
+   space to the right of the sidebar (flex: 1).
+   The crosshatch pattern on the wrapper provides
+   a visual "outside the work area" texture.
+   #work-canvas is positioned absolutely inside
+   and sized to fill the wrapper by app.js.
+   ───────────────────────────────────────────── */
+.canvas-wrapper {
+    flex: 1; /* Fill all space to the right of the sidebar */
+    overflow: hidden;
+    position: relative; /* Required so the canvas can be position:absolute */
+    background: var(--bg-canvas);
+    /* Subtle crosshatch pattern outside the work area grid.
+     This is CSS only — the actual grid is drawn on the canvas by app.js.
+     To remove this texture: delete the background-image lines below. */
+    background-image: repeating-linear-gradient( 45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px ), repeating-linear-gradient( -45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px );
+    cursor: crosshair; /* Default; overridden dynamically in app.js */
+}
+
+/* The actual drawing canvas.
+   Width/height set by resizeCanvas() in app.js — do not set here.
+   Positioned to fill the wrapper exactly. */
+#work-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* cursor is set via JS so it can change with the active tool */
+}
+
+
+/* ─────────────────────────────────────────────
+   8. STATUS BAR (bottom footer)
+   Fixed height bar at the bottom.
+   Spans inside are updated by app.js:
+     #status-tool → active tool name
+     #status-size → work area dimensions
+     #status-grid → current grid spacing
+   ───────────────────────────────────────────── */
+.status-bar {
+    height: var(--footer-h);
+    min-height: var(--footer-h);
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 2rem; /* Space between status items */
+    flex-shrink: 0; /* Must not shrink */
+}
+
+    .status-bar span {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: var(--text-mid);
+        letter-spacing: 0.04em;
+    }
+
+/* Credit text pushed to far right with margin-left: auto */
+.status-credit {
+    margin-left: auto;
+    color: var(--text-dim) !important;
+}
+
+
+/* ─────────────────────────────────────────────
+   9. SCROLLBAR STYLING (canvas wrapper)
+   Thin dark scrollbars to match the theme.
+   These only appear if content overflows,
+   which shouldn't happen with the current layout
+   (canvas fills wrapper exactly), but good to have.
+   ───────────────────────────────────────────── */
+.canvas-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.canvas-wrapper::-webkit-scrollbar-track {
+    background: var(--bg-deep);
+}
+
+.canvas-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+

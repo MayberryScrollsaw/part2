@@ -1,0 +1,1753 @@
+/*
+  ============================================================
+  MAYBERRY SCROLLSAW — styles.css
+  ============================================================
+  OVERVIEW
+    All visual styling for the Mayberry Scrollsaw home page.
+    Organized in the order the sections appear in the HTML.
+
+  TABLE OF CONTENTS
+    1.  CSS Custom Properties (design tokens)
+    2.  Reset & Base Styles
+    3.  Accessibility helpers
+    4.  Typography
+    5.  Shared / Utility Styles
+    6.  Header & Navigation
+    7.  Hero Section
+    8.  Features / Porch Cards Section
+    9.  Gallery Section
+   10.  Lightbox
+   11.  About Section
+   12.  Contact / Newsletter Section
+   13.  Footer
+   14.  Scroll-reveal animations
+   15.  Responsive — tablet (max-width: 900px)
+   16.  Responsive — mobile (max-width: 600px)
+   17.  Blog Page
+
+  DESIGN PHILOSOPHY
+    The aesthetic is "warm Americana small-town" — think
+    unpainted pine boards, hand-lettered signs, screen doors,
+    and county fair ribbons. Colors are earthy and sun-warmed.
+    Typography pairs Playfair Display (editorial serif) with
+    Lora (readable body serif).
+
+  ARCHITECTURE NOTES
+    • All colors, spacing, and radii live in Section 1 (CSS
+      custom properties). Avoid hardcoding values elsewhere —
+      update the token here and every consumer updates too.
+    • Responsive breakpoints are at the end (sections 15–16)
+      so they naturally override anything declared above.
+    • JS interactions (scrolled header, mobile nav, lightbox,
+      scroll-reveal) work by toggling classes:
+        .scrolled    → #site-header
+        .is-open     → #main-nav  (mobile drawer)
+        .is-visible  → .scroll-reveal elements
+        .is-open     → .lightbox
+    • The `hidden` HTML attribute is used on the lightbox;
+      Section 10 overrides the UA stylesheet to honour it.
+  ============================================================
+*/
+
+
+/* ═══════════════════════════════════════════════════════════
+   1. CSS CUSTOM PROPERTIES
+   ═══════════════════════════════════════════════════════════
+   Design tokens are the single source of truth for the
+   visual system. All sections below consume these variables
+   rather than literal values, so a rebrand only requires
+   changes here.
+
+   Naming convention:
+     --<category>-<variant>   e.g. --green-dark, --space-md
+   ═══════════════════════════════════════════════════════════ */
+:root {
+    /* ── Color Palette ──────────────────────────────────────
+     Palette spans from light parchment to deep bark-brown,
+     with sage green as the supporting accent and barn-red
+     reserved for rare emphasis (errors, badges, etc.).
+
+     Usage guide:
+       --cream        page / card backgrounds
+       --parchment    alternating section backgrounds
+       --warm-tan     borders, icons, highlights
+       --bark         headings, primary buttons, links
+       --bark-deep    footer background, deepest shadows
+       --sawdust      lightest divider / border color
+       --green-sage   secondary CTAs, card links
+       --green-dark   hover state for sage elements
+       --red-barn     use sparingly (errors, badges)
+       --text-main    body copy
+       --text-muted   secondary copy, captions, meta
+  ──────────────────────────────────────────────────────── */
+    --cream: #f5f0e8; /* warm off-white — main page background    */
+    --parchment: #ede5d0; /* slightly darker — alternating bg         */
+    --warm-tan: #c9a96e; /* mid-tone wood — icons, borders, accents  */
+    --bark: #6b4c2a; /* dark brown — headings, borders, btn bg   */
+    --bark-deep: #3e2a14; /* deepest brown — footer, deep shadows     */
+    --sawdust: #e8d5b0; /* lightest wood highlight, divider lines   */
+    --green-sage: #7a8c6e; /* muted sage green — secondary accent      */
+    --green-dark: #4a5e3a; /* darker green — hover state for sage      */
+    --red-barn: #9b3a2e; /* classic barn-red — use sparingly         */
+    --text-main: #3a2a18; /* primary body text                        */
+    --text-muted: #7a6a52; /* secondary / muted text                   */
+    --white: #ffffff;
+    /* ── Typography ─────────────────────────────────────────
+     Two complementary Google Fonts, both serifs.
+     Playfair Display: high-contrast editorial serif for
+       headings and UI labels — evokes old newspaper mastheads.
+     Lora: optical-size-optimised serif for body text —
+       comfortable at paragraph lengths.
+     Both fall back to Georgia, then the generic serif stack.
+  ──────────────────────────────────────────────────────── */
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Lora', Georgia, serif;
+    /* ── Spacing Scale ──────────────────────────────────────
+     Based on an 8px grid. Use these tokens instead of
+     arbitrary rem/px values so whitespace stays rhythmic.
+
+       xs   =  8px   micro gaps (icon-to-text, inline gaps)
+       sm   = 16px   compact padding, small stack gaps
+       md   = 24px   card padding, medium gaps
+       lg   = 40px   section-to-content gaps
+       xl   = 64px   generous section padding
+       xxl  = 96px   hero / full-section vertical padding
+  ──────────────────────────────────────────────────────── */
+    --space-xs: 0.5rem; /*  8px */
+    --space-sm: 1rem; /* 16px */
+    --space-md: 1.5rem; /* 24px */
+    --space-lg: 2.5rem; /* 40px */
+    --space-xl: 4rem; /* 64px */
+    --space-xxl: 6rem; /* 96px */
+    /* ── Layout ─────────────────────────────────────────────
+     --max-width  caps the content column so line lengths
+                  stay comfortable at wide viewports.
+     --header-h   used by hero padding-top and mobile nav
+                  positioning so they stay in sync.
+  ──────────────────────────────────────────────────────── */
+    --max-width: 1100px;
+    --header-h: 100px;
+    /* ── Borders & Radius ───────────────────────────────────
+     sm  — subtle rounding for tags, focus rings
+     md  — buttons, inputs, gallery items, tip boxes
+     lg  — cards, feature images (more pronounced rounding)
+  ──────────────────────────────────────────────────────── */
+    --radius-sm: 4px;
+    --radius-md: 10px;
+    --radius-lg: 20px;
+    /* ── Shadows ────────────────────────────────────────────
+     All shadows use --bark-deep (warm dark brown) instead
+     of neutral grey so they read as part of the wood palette.
+
+     sm  — resting state for cards and buttons
+     md  — hover / interactive lift
+     lg  — lightbox image, full-screen overlays
+  ──────────────────────────────────────────────────────── */
+    --shadow-sm: 0 2px 8px rgba(62,42,20,0.12);
+    --shadow-md: 0 6px 24px rgba(62,42,20,0.18);
+    --shadow-lg: 0 12px 48px rgba(62,42,20,0.25);
+    /* ── Transitions ────────────────────────────────────────
+     --ease-out  custom cubic-bezier — fast start, gentle
+                 overshoot-free deceleration (iOS feel)
+     --t-fast    micro-interactions (color swaps, opacity)
+     --t-mid     UI state changes (nav open, card hover)
+     --t-slow    entrance animations (scroll-reveal, hero)
+  ──────────────────────────────────────────────────────── */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --t-fast: 160ms;
+    --t-mid: 320ms;
+    --t-slow: 500ms;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   2. RESET & BASE STYLES
+   ═══════════════════════════════════════════════════════════
+   Minimal modern reset. Goals:
+     • Eliminate browser default margin/padding surprises.
+     • Make border-box sizing the universal default so
+       padding never breaks layout math.
+     • Establish comfortable base typography.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Apply border-box sizing to every element including
+   pseudo-elements (::before / ::after decorators). */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    /* Smooth scrolling enables animated jumps when the user
+     clicks in-page anchor links (e.g., nav → #gallery).
+     Note: prefers-reduced-motion users may prefer instant
+     jumps; a media query override could be added if needed. */
+    scroll-behavior: smooth;
+    font-size: 16px; /* establishes the rem base */
+}
+
+body {
+    font-family: var(--font-body);
+    font-size: 1.0625rem; /* 17px — 1px larger than default for readability */
+    line-height: 1.75; /* generous leading for body copy */
+    color: var(--text-main);
+    background-color: var(--cream);
+    /*
+    Subtle wood-grain texture using a repeating CSS gradient.
+    Three repeating linear-gradient() layers are possible in
+    background-image by separating with commas — the browser
+    composites them. The result is a fine horizontal line
+    pattern at 4px intervals at very low opacity (0.03),
+    evoking pine-board grain without a real image.
+  */
+    background-image: repeating-linear-gradient( 0deg, transparent, transparent 3px, rgba(180,140,90,0.03) 3px, rgba(180,140,90,0.03) 4px );
+    /* Sub-pixel font rendering on macOS / retina screens */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Block display on img prevents inline baseline gaps */
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    color: var(--bark);
+    /* Underline in a lighter shade so the link reads clearly
+     without competing with the text color */
+    text-decoration-color: var(--warm-tan);
+    transition: color var(--t-fast) var(--ease-out);
+}
+
+    a:hover,
+    a:focus-visible {
+        color: var(--green-dark);
+    }
+
+/* Remove bullet / numbering defaults — each component
+   that uses <ul> / <ol> provides its own list styling */
+ul {
+    list-style: none;
+}
+
+/* Buttons inherit the page font and look clickable by default.
+   Individual button variants build on top in Section 5. */
+button {
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    background: none;
+}
+
+/* Remove the default browser focus ring globally.
+   We replace it with a branded custom ring below.
+   IMPORTANT: Never remove focus styles without replacing them
+   — keyboard users depend on a visible focus indicator. */
+:focus {
+    outline: none;
+}
+
+/* Custom focus ring — visible only for keyboard navigation
+   (browsers suppress :focus-visible for mouse/touch clicks).
+   Uses sage green to stand out against cream and bark tones. */
+:focus-visible {
+    outline: 2px solid var(--green-sage);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   3. ACCESSIBILITY HELPERS
+   ═══════════════════════════════════════════════════════════
+   Utility classes that improve assistive-technology support
+   without affecting the visual design.
+   ═══════════════════════════════════════════════════════════ */
+
+/*
+  .sr-only — Screen-reader-only text.
+  Visually hidden but present in the accessibility tree.
+  Common uses: icon button labels, "Skip to content" links,
+  decorative element descriptions.
+
+  Technique: collapses to 1×1px, clips overflow, and uses
+  position:absolute so it doesn't affect flow layout.
+  Do NOT use `display:none` or `visibility:hidden` — those
+  hide the element from screen readers as well.
+*/
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   4. TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════
+   Heading scale uses fluid sizing via clamp():
+     clamp(min, preferred, max)
+   The preferred value is a viewport-width unit (vw) so
+   headings scale smoothly between the min and max —
+   no abrupt jumps at breakpoints.
+   ═══════════════════════════════════════════════════════════ */
+
+h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.2; /* tighter than body — headings don't need as much leading */
+    color: var(--bark);
+}
+
+/* clamp(2.4rem, 6vw, 4rem) = never smaller than 38px, scales with viewport,
+   never larger than 64px. Same pattern for h2. */
+h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+/* Fixed — used inside cards with controlled context */
+
+/* ch unit = width of "0" glyph; 65ch ≈ optimal line length
+   for comfortable reading (roughly 75 characters). */
+p {
+    max-width: 65ch;
+}
+
+em {
+    font-style: italic;
+}
+
+/*
+  Blockquote — styled as a pull-quote / testimonial.
+  Uses a warm-tan left border and display typeface for visual
+  distinction from body copy. Only use for genuine quotations.
+*/
+blockquote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--warm-tan);
+    border-left: 4px solid var(--warm-tan);
+    padding-left: var(--space-sm);
+    margin: var(--space-md) 0;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   5. SHARED / UTILITY STYLES
+   ═══════════════════════════════════════════════════════════
+   Reusable components consumed by multiple sections:
+   buttons, section wrappers, titles, and decorative rules.
+
+   BUTTON SYSTEM
+   ─────────────
+   Base class .btn handles geometry and transitions.
+   Modifier classes add color / border variants:
+
+     .btn-primary   filled bark-brown — main call to action
+     .btn-secondary outlined with tan border — softer option
+     .btn-third     filled warm-tan — mid-weight emphasis
+
+   The hero section locally overrides these colors (Section 7)
+   because they need to contrast against the dark background.
+   ═══════════════════════════════════════════════════════════ */
+
+/* --- Base Button ---
+   display:inline-block lets the element respect padding while
+   still sitting inline with text if needed. */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em; /* slight tracking improves readability at small sizes */
+    text-decoration: none;
+    transition: background-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+}
+
+    /* Depress 1px on click — haptic-like tactile feedback */
+    .btn:active {
+        transform: translateY(1px);
+    }
+
+/* --- Primary Button --- */
+.btn-primary {
+    background-color: var(--bark);
+    color: var(--cream);
+    box-shadow: var(--shadow-sm);
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+        background-color: var(--bark-deep);
+        color: var(--cream);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px); /* float upward — suggests interactivity */
+    }
+
+/* --- Secondary Button (outlined) --- */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--bark);
+    border: 2px solid var(--warm-tan);
+}
+
+    .btn-secondary:hover,
+    .btn-secondary:focus-visible {
+        background-color: var(--warm-tan);
+        color: var(--white);
+        border-color: var(--warm-tan);
+    }
+
+/* --- Third Button (warm-tan fill) ---
+   Sits between primary and secondary in visual weight.
+   Used where a CTA needs emphasis without being the
+   dominant action on the page. */
+.btn-third {
+    background-color: var(--warm-tan);
+    color: var(--cream);
+    box-shadow: var(--shadow-sm);
+}
+
+    .btn-third:hover,
+    .btn-third:focus-visible {
+        background-color: var(--warm-tan);
+        color: var(--white);
+        border-color: var(--warm-tan);
+    }
+
+/* ── Section Layout Helpers ─────────────────────────────── */
+
+/* .section-inner — constrains content column and adds
+   consistent vertical breathing room across all sections. */
+.section-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-xxl) var(--space-lg);
+}
+
+/* Default section title is centered; .left-aligned overrides
+   for sections where left alignment feels more editorial. */
+.section-title {
+    text-align: center;
+    margin-bottom: var(--space-xs);
+}
+
+    .section-title.left-aligned {
+        text-align: left;
+    }
+
+/* Subtitle / intro copy beneath section headings */
+.section-sub {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: var(--space-lg);
+    max-width: 55ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ── Decorative Rule ─────────────────────────────────────
+   A short warm-tan bar rendered via ::after pseudo-element.
+   Appears under every .section-title automatically — no
+   extra HTML element required.
+   Centered by default; left-aligned variant adjusts margin. */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--warm-tan);
+    border-radius: 2px;
+    margin: 0.6rem auto 0; /* auto left/right → centered */
+}
+
+.section-title.left-aligned::after {
+    margin-left: 0; /* pin to the left edge */
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   6. HEADER & NAVIGATION
+   ═══════════════════════════════════════════════════════════
+   The header is fixed (stays at the top while the page
+   scrolls). script.js listens for scroll events and adds
+   .scrolled to #site-header, which triggers a height
+   reduction and shadow — indicating depth below the header.
+
+   Mobile navigation (hamburger + drawer) is also controlled
+   here. The drawer is off-canvas by default and slides in
+   when .is-open is added to #main-nav by script.js.
+   ═══════════════════════════════════════════════════════════ */
+#site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100; /* above page content; below lightbox (z: 200) */
+    height: var(--header-h);
+    background-color: var(--cream);
+    border-bottom: 1px solid var(--sawdust);
+    transition: box-shadow var(--t-mid) var(--ease-out), height var(--t-mid) var(--ease-out);
+}
+
+    /* Scrolled state — added by JS when window.scrollY > 0.
+   Height decreases (72px → 58px) for more content room;
+   shadow appears to visually "lift" the header off the page. */
+    #site-header.scrolled {
+        height: 80px;
+        box-shadow: var(--shadow-md);
+    }
+
+/* Inner row: logo on the left, nav on the right */
+.header-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+
+/* ── Logo ────────────────────────────────────────────────── */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--bark);
+    flex-shrink: 0; /* prevent logo from squishing in tight headers */
+}
+
+.logo-img {
+    height: calc(var(--header-h) - 16px);
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-icon {
+    width: 80px;
+    height: auto;
+    color: var(--warm-tan);
+    transition: transform var(--t-mid) var(--ease-out);
+}
+.logo-pic {
+    width: 125px;
+    height: auto;
+    color: var(--warm-tan);
+    transition: transform var(--t-mid) var(--ease-out);
+}
+.logo-pic2 {
+    width: 200px;
+    height: 175px;
+    color: var(--warm-tan);
+    transition: transform var(--t-mid) var(--ease-out);
+}
+
+.site-pic {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto 2rem;
+}
+/* Easter egg: the saw blade spins 45° on hover */
+.logo:hover .logo-icon {
+  // transform: rotate(45deg);
+}
+
+/* Two-line logo wordmark */
+.logo-text {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+    /* Tagline below brand name — slightly smaller and italic */
+    .logo-text em {
+        color: var(--warm-tan);
+        font-style: italic;
+        font-size: 0.9em; /* em = relative to parent .logo-text size */
+    }
+
+/* ── Desktop Nav Links ───────────────────────────────────── */
+#main-nav ul {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+#main-nav a {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-main);
+    padding-bottom: 2px;
+    /* Animated underline: starts transparent, fills with warm-tan on hover.
+     More elegant than a default text-underline because the thickness
+     and color are under our control. */
+    border-bottom: 2px solid transparent;
+    transition: border-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+
+    #main-nav a:hover,
+    #main-nav a:focus-visible {
+        color: var(--bark);
+        border-bottom-color: var(--warm-tan);
+    }
+
+/* ── Hamburger Button (mobile only) ─────────────────────────
+   Three horizontal <span> elements act as the three bars.
+   When aria-expanded="true" (nav open), CSS transforms the
+   top and bottom bars into an ✕ shape and hides the middle. */
+.hamburger {
+    display: none; /* Hidden on desktop (shown via 900px media query) */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+}
+
+    /* Individual bar lines */
+    .hamburger span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background-color: var(--bark);
+        border-radius: 2px;
+        transition: transform var(--t-mid) var(--ease-out), opacity var(--t-mid);
+    }
+
+    /* ── Hamburger → ✕ animation ─────────────────────────────── */
+
+    /* Top bar rotates clockwise and shifts down to form the top of ✕ */
+    .hamburger[aria-expanded="true"] span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+    /* Middle bar fades out — it would overlap the ✕ */
+    .hamburger[aria-expanded="true"] span:nth-child(2) {
+        opacity: 0;
+    }
+    /* Bottom bar rotates counter-clockwise and shifts up to form the bottom of ✕ */
+    .hamburger[aria-expanded="true"] span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+
+/* ═══════════════════════════════════════════════════════════
+   7. HERO SECTION
+   ═══════════════════════════════════════════════════════════
+   Full-viewport banner — the first thing a visitor sees.
+
+   Layout approach:
+     • min-height: 100svh fills the viewport; svh (small
+       viewport height) accounts for mobile browser chrome
+       (address bar) so it doesn't overflow on iOS Safari.
+     • padding-top: var(--header-h) pushes content below
+       the fixed header.
+     • Flex centering places .hero-content in the middle.
+
+   Background technique:
+     • Base: linear-gradient (dark brown, wood tones).
+     • Layer 2: repeating horizontal lines at ~0.03 opacity
+       — grain running with the tree rings.
+     • Layer 3: second repeating gradient at a slightly
+       different angle — cross-grain texture variation.
+     • Layer 1 (top): radial gradient vignette darkens the
+       right side, drawing focus to the center-left text.
+   ═══════════════════════════════════════════════════════════ */
+#hero {
+    position: relative;
+    min-height: 100svh;
+    padding-top: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* clips the decorative .hero-shaving circles */
+
+    background-color: var(--bark);
+    background-image:
+    /* Layer 1 — vignette, darkens right edge */
+    radial-gradient(ellipse at 30% 50%, rgba(107,76,42,0.0) 0%, rgba(62,42,20,0.65) 100%),
+    /* Layer 2 — fine horizontal grain lines */
+    repeating-linear-gradient( 88deg, transparent 0px, transparent 18px, rgba(255,240,200,0.03) 18px, rgba(255,240,200,0.03) 20px ),
+    /* Layer 3 — slightly wider grain at opposing angle */
+    repeating-linear-gradient( 92deg, transparent 0px, transparent 40px, rgba(0,0,0,0.04) 40px, rgba(0,0,0,0.04) 42px ),
+    /* Layer 4 (bottom) — base colour ramp */
+    linear-gradient(160deg, #8b5e34 0%, #5a3a1a 55%, #3e2a14 100%);
+}
+
+/* Content column — z-index 2 keeps it above the decorative
+   .hero-shaving elements (which are z-index auto / 1) */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    color: var(--cream);
+}
+
+/* Small italic label above the main headline — sets context */
+.hero-eyebrow {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--warm-tan);
+    letter-spacing: 0.06em; /* wide tracking for a label feel */
+    margin-bottom: var(--space-sm);
+}
+
+/* Override heading color for dark hero background */
+.hero-content h1 {
+    color: var(--cream);
+    margin-bottom: var(--space-sm);
+    /* Warm shadow gives depth against the textured bg */
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+    /* .accent wraps a secondary phrase inside h1.
+   display:block forces a line break so it sits on its own row. */
+    .hero-content h1 .accent {
+        color: var(--warm-tan);
+        display: block;
+    }
+
+/* Supporting description below the headline */
+.hero-sub {
+    color: rgba(245,240,232,0.85); /* slightly transparent cream */
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-width: 52ch;
+    margin: 0 auto var(--space-lg);
+}
+
+/* CTA button row — wraps gracefully when two buttons won't fit */
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: center;
+}
+
+/* ── Hero Button Color Overrides ────────────────────────────
+   The standard .btn-primary is too light against the cream
+   background to work on the dark hero. We swap colors here
+   so buttons stay visually prominent on the dark wood tone. */
+.hero-content .btn-primary {
+    background-color: var(--warm-tan);
+    color: var(--bark-deep); /* dark text on light button = accessible contrast */
+}
+
+    .hero-content .btn-primary:hover {
+        background-color: var(--cream);
+        color: var(--bark-deep);
+    }
+
+.hero-content .btn-secondary {
+    color: var(--cream);
+    border-color: rgba(245,240,232,0.5); /* semi-transparent border reads on dark bg */
+}
+
+    .hero-content .btn-secondary:hover {
+        background-color: rgba(245,240,232,0.15);
+        color: var(--cream);
+    }
+
+.hero-content .btn-third {
+    background-color: var(--warm-tan);
+    color: var(--bark-deep);
+}
+
+    .hero-content .btn-third:hover {
+        background-color: var(--cream);
+        color: var(--bark-deep);
+    }
+
+/* ── Decorative Curled Wood Shavings ────────────────────────
+   Purely aesthetic. Each .hero-shaving is a circle with a
+   semi-transparent border (no fill), sized and positioned
+   to imply curled wood shavings in the background.
+   pointer-events:none ensures they never block clicks.
+   The @keyframes drift below creates a slow float + rotate. */
+.hero-shaving {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid rgba(201,169,110,0.2);
+    pointer-events: none;
+    animation: drift linear infinite;
+}
+
+    /* Large shaving — lower-left, slow rotation */
+    .hero-shaving.s1 {
+        width: 120px;
+        height: 120px;
+        bottom: 15%;
+        left: 8%;
+        animation-duration: 18s;
+        animation-delay: -4s; /* negative delay starts mid-animation on load */
+    }
+
+    /* Small shaving — upper-right, faster, even fainter */
+    .hero-shaving.s2 {
+        width: 70px;
+        height: 70px;
+        top: 20%;
+        right: 10%;
+        animation-duration: 12s;
+        animation-delay: -9s;
+        border-color: rgba(201,169,110,0.12);
+    }
+
+    /* Giant shaving — overflowing the bottom-right corner */
+    .hero-shaving.s3 {
+        width: 200px;
+        height: 200px;
+        bottom: -40px;
+        right: 5%;
+        animation-duration: 24s;
+        border-color: rgba(201,169,110,0.07); /* barely visible — subtle depth */
+    }
+
+/*
+  @keyframes drift — combine a full 360° rotation with a
+  small lateral shift and an opacity pulse.
+  translateX(8px) at 50% + rotation creates an elliptical
+  orbital path rather than a static spin.
+*/
+@keyframes drift {
+    0% {
+        transform: rotate(0deg) translateX(0);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: rotate(180deg) translateX(8px);
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: rotate(360deg) translateX(0);
+        opacity: 0.6;
+    }
+}
+
+/* ── Hero Content Entrance Animation ─────────────────────────
+   script.js adds .reveal to .hero-content after page load,
+   triggering this entrance. The class is applied with a small
+   setTimeout so it fires after the browser first paints —
+   guaranteeing the from-state is visible before animating. */
+.hero-content.reveal {
+    animation: heroReveal 1s var(--ease-out) both;
+    /* `both` fill-mode means the element holds the from-state
+     before the animation starts and the to-state after. */
+}
+
+@keyframes heroReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   8. FEATURES / PORCH CARDS SECTION
+   ═══════════════════════════════════════════════════════════
+   Three feature highlight cards on a parchment background.
+
+   Grid: 3 equal columns on desktop → 2 on tablet → 1 on
+   mobile (via media queries in Sections 15–16).
+
+   Card interactivity: translateY(-6px) on hover creates a
+   "lift" effect reinforced by a heavier box-shadow.
+   ═══════════════════════════════════════════════════════════ */
+#features {
+    background-color: var(--parchment);
+    /* Diagonal hatching at 45°, very low opacity —
+     evokes the ruled lines of a wooden ledger or notepad */
+    background-image: repeating-linear-gradient( 45deg, transparent, transparent 20px, rgba(180,140,90,0.04) 20px, rgba(180,140,90,0.04) 21px );
+    /* Sawdust borders visually separate from adjacent cream sections */
+    border-top: 3px solid var(--sawdust);
+    border-bottom: 3px solid var(--sawdust);
+}
+
+/* ── Card Grid ───────────────────────────────────────────── */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* equal columns */
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+/* ── Individual Porch Card ───────────────────────────────── */
+.porch-card {
+    background-color: var(--cream);
+    border: 1px solid var(--sawdust);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg) var(--space-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--t-mid) var(--ease-out), box-shadow var(--t-mid) var(--ease-out);
+}
+
+    /* Lift card on hover — shadow increases to reinforce height */
+    .porch-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-md);
+    }
+
+/* ── Card Icon ───────────────────────────────────────────── */
+.card-icon {
+    width: 52px;
+    height: 52px;
+    color: var(--warm-tan); /* currentColor allows SVG to inherit this */
+    margin-bottom: var(--space-sm);
+}
+
+    /* Filled SVG icons — fill with warm-tan, no stroke */
+    .card-icon svg {
+        width: 100%;
+        height: 100%;
+        fill: var(--warm-tan);
+        stroke: none;
+    }
+
+        /* Outlined SVG icons — stroke with warm-tan, no fill.
+   The [fill="none"] attribute selector targets outline-style
+   icons specifically, leaving filled icons unaffected. */
+        .card-icon svg[fill="none"] {
+            fill: none;
+            stroke: var(--warm-tan);
+        }
+
+/* ── Card Text ───────────────────────────────────────────── */
+.porch-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: var(--bark);
+    margin-bottom: 0.6rem;
+}
+
+.porch-card p {
+    color: var(--text-muted);
+    font-size: 0.97rem;
+    margin-bottom: var(--space-sm);
+}
+
+/* "Learn more →" style inline link at the bottom of a card */
+.card-link {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--green-sage);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color var(--t-fast) var(--ease-out);
+}
+
+    .card-link:hover,
+    .card-link:focus-visible {
+        color: var(--green-dark);
+    }
+
+
+/* ═══════════════════════════════════════════════════════════
+   9. GALLERY SECTION
+   ═══════════════════════════════════════════════════════════
+   3-column image grid. Each image is wrapped in a <figure>
+   (.gallery-item) with a <figcaption> overlay that reveals
+   on hover (opacity transition from 0 → 1).
+
+   Clicking a gallery image opens the lightbox (Section 10).
+   The click target is a <button> (.gallery-btn) inside the
+   <figure>, which keeps the interaction accessible to keyboard
+   users and screen reader / AT users.
+   ═══════════════════════════════════════════════════════════ */
+#gallery {
+    background-color: var(--cream);
+}
+
+/* ── Gallery Grid ────────────────────────────────────────── */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+}
+
+/* ── Gallery Item (<figure>) ─────────────────────────────── */
+.gallery-item {
+    margin: 0; /* <figure> has browser default margin — reset it */
+    position: relative; /* positions the absolute figcaption overlay */
+    border-radius: var(--radius-md);
+    overflow: hidden; /* clips image zoom and overlay to rounded corners */
+    box-shadow: var(--shadow-sm);
+}
+
+    /* Overlay caption — absolutely fills the figure,
+   hidden by default (opacity:0), fades in on hover/focus */
+    .gallery-item figcaption {
+        position: absolute;
+        inset: 0; /* shorthand for top/right/bottom/left = 0 */
+        background: rgba(62,42,20,0.6); /* semi-transparent bark brown */
+        color: var(--cream);
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity var(--t-mid) var(--ease-out);
+        /* Prevent the overlay from intercepting mouse events while invisible,
+     so cursor: pointer on the button beneath is still visible */
+        pointer-events: none;
+    }
+
+    /* Trigger overlay on hover OR when a child button is focused
+   (:focus-within) — ensures keyboard users see the caption too */
+    .gallery-item:hover figcaption,
+    .gallery-item:focus-within figcaption {
+        opacity: 1;
+    }
+
+/* ── Gallery Button ──────────────────────────────────────── */
+/* Wrapper <button> makes the image keyboard-operable.
+   Reset all button styles so only the image is visible. */
+.gallery-btn {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+    /* Fixed-height images; object-fit:cover ensures they all fill
+   the same dimensions without distortion regardless of
+   the original aspect ratio */
+    .gallery-btn img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+        transition: transform var(--t-slow) var(--ease-out);
+    }
+
+    /* Subtle zoom effect on hover — stays clipped by parent overflow:hidden */
+    .gallery-btn:hover img,
+    .gallery-btn:focus-visible img {
+        transform: scale(1.05);
+    }
+
+/* Centered "View Full Gallery" button below the grid */
+.gallery-cta {
+    text-align: center;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   10. LIGHTBOX
+   ═══════════════════════════════════════════════════════════
+   Full-screen overlay displayed when a gallery thumbnail is
+   clicked. Managed entirely by script.js:
+     • The `hidden` HTML attribute is removed to show it.
+     • .is-open class can be used for additional JS hooks.
+
+   z-index 200 places it above the fixed header (z: 100).
+   The semi-opaque dark background dims the page content.
+
+   IMPORTANT: The browser's UA stylesheet gives `display:none`
+   to elements with the `hidden` attribute, which would
+   override the `display:flex` below. The explicit rule
+   `.lightbox[hidden] { display:none }` ensures consistent
+   behaviour across browsers.
+   ═══════════════════════════════════════════════════════════ */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(30,18,8,0.92); /* near-opaque deep bark brown */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    animation: lbFade var(--t-mid) var(--ease-out) both;
+}
+
+    /* Honour the `hidden` HTML attribute to properly hide the lightbox.
+   Without this, the above `display:flex` could win over `hidden`
+   in some browser / specificity combinations. */
+    .lightbox[hidden] {
+        display: none;
+    }
+
+/* Fade in animation when the lightbox opens */
+@keyframes lbFade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Close (✕) button — fixed to the top-right corner of the overlay */
+.lightbox-close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    font-size: 1.5rem;
+    color: var(--cream);
+    background: rgba(255,255,255,0.1);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; /* circular button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--t-fast);
+}
+
+    .lightbox-close:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+/* The enlarged image — constrained so it never overflows the viewport */
+#lightbox-img {
+    max-width: 95vw;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    object-fit: contain; /* show full image, don't crop */
+}
+
+/* Caption below the lightbox image — italic display font */
+.lightbox-caption {
+    margin-top: var(--space-sm);
+    color: var(--sawdust);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1rem;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   11. ABOUT SECTION
+   ═══════════════════════════════════════════════════════════
+   Two-column layout on desktop:
+     Left column (240px fixed)  — decorative scrollsaw blade SVG
+     Right column (flexible 1fr) — brand story text + quote
+
+   On tablet and below (Section 15), the grid collapses to a
+   single column and the graphic moves above the text.
+
+   The blade SVG rotation-on-hover is intentionally slow
+   (1.2s ease-out) — it should feel meditative, not snappy.
+   ═══════════════════════════════════════════════════════════ */
+#about {
+    background-color: var(--parchment);
+    border-top: 3px solid var(--sawdust);
+    border-bottom: 3px solid var(--sawdust);
+}
+
+/* Fixed-width left column for the graphic keeps proportions
+   consistent without it shrinking into the text column */
+.about-inner {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    align-items: center;
+    gap: var(--space-xl);
+}
+
+.about-graphic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* max-width constraint prevents the SVG from growing too large
+   on wide columns; transition enables the hover-spin effect */
+.blade-svg {
+    width: 100%;
+    max-width: 200px;
+    transition: transform 1.2s var(--ease-out);
+}
+
+/* Hover the graphic container (not just the SVG) so the hit
+   area is larger and easier to trigger */
+.about-graphic:hover .blade-svg {
+    transform: rotate(60deg);
+}
+
+.about-text p {
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+    max-width: 58ch;
+}
+
+.about-text .btn {
+    margin-top: var(--space-sm);
+    display: block;
+    width: fit-content; /* shrink to fit content, rather than full width */
+    margin-left: auto;
+    margin-right: auto; /* center the button under the text */
+}
+
+/* Pull-quote styling — uses the global blockquote rules
+   but constrained to 50ch for comfortable line length */
+.about-quote {
+    max-width: 50ch;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   12. CONTACT / NEWSLETTER SECTION
+   ═══════════════════════════════════════════════════════════
+   Dark band with an inline newsletter sign-up form.
+   Color overrides are needed throughout because base styles
+   are designed for light backgrounds (cream/parchment).
+
+   Form layout: flex row on desktop, flex column on mobile
+   (Section 16). Inputs grow with flex:1 to fill available
+   space while the submit button stays a natural width.
+   ═══════════════════════════════════════════════════════════ */
+#contact {
+    background-color: var(--bark);
+    /* Horizontal grain lines matching the hero texture,
+     but much more subtle — just enough to break flat color */
+    background-image: repeating-linear-gradient( 89deg, transparent 0px, transparent 22px, rgba(255,240,200,0.03) 22px, rgba(255,240,200,0.03) 24px );
+}
+
+/* Center the narrow content column within the dark band */
+.contact-inner {
+    text-align: center;
+    max-width: 640px;
+}
+
+    /* ── Dark-background Overrides for Section Title ────────────
+   The global .section-title and its ::after pseudo-element
+   default to bark-colored text and a tan bar — both
+   invisible on this dark background. Override both here. */
+    .contact-inner .section-title,
+    .contact-inner .section-title::after {
+        color: var(--cream);
+    }
+
+        .contact-inner .section-title::after {
+            background: var(--warm-tan);
+            margin-left: auto; /* re-center the bar (overrides left-aligned variants) */
+            margin-right: auto;
+        }
+
+    .contact-inner .section-sub {
+        color: rgba(245,240,232,0.75); /* slightly transparent cream for hierarchy */
+    }
+
+/* ── Newsletter Form ─────────────────────────────────────── */
+.newsletter-form {
+    display: flex;
+    flex-wrap: wrap; /* wraps to column on narrow viewports */
+    gap: var(--space-sm);
+    justify-content: center;
+    margin-bottom: var(--space-sm);
+}
+
+    /* Text inputs (name, email) */
+    .newsletter-form input {
+        flex: 1 1 180px; /* grow to fill space, shrink if needed, 180px base */
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--warm-tan);
+        border-radius: var(--radius-md);
+        /* Translucent background lets the wood-grain bg show through slightly */
+        background: rgba(245,240,232,0.12);
+        color: var(--cream);
+        font-family: var(--font-body);
+        font-size: 1rem;
+        transition: background var(--t-fast), border-color var(--t-fast);
+    }
+
+        /* Placeholder text at lower opacity so it's clearly secondary */
+        .newsletter-form input::placeholder {
+            color: rgba(245,240,232,0.5);
+        }
+
+        /* Increase background opacity on focus — subtle highlight */
+        .newsletter-form input:focus-visible {
+            background: rgba(245,240,232,0.2);
+            border-color: var(--cream);
+            outline-color: var(--warm-tan);
+        }
+
+/* Submit button — override primary from dark bark to warm tan
+   so it pops against the bark section background */
+.contact-inner .btn-primary {
+    background-color: var(--warm-tan);
+    color: var(--bark-deep);
+}
+
+    .contact-inner .btn-primary:hover {
+        background-color: var(--cream);
+    }
+
+/* ── Success Message ─────────────────────────────────────── */
+/* Injected by script.js after successful form submission.
+   Replaces the form inline; uses fadeIn to appear smoothly. */
+.nl-success {
+    color: var(--sawdust);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 1.05rem;
+    animation: fadeIn var(--t-mid) var(--ease-out);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fine-print privacy / unsubscribe note below the form */
+.contact-note {
+    color: rgba(245,240,232,0.55);
+    font-size: 0.87rem;
+    max-width: unset; /* override the 65ch global p rule — this note can span full width */
+}
+
+    .contact-note a {
+        color: rgba(245,240,232,0.7);
+    }
+
+        .contact-note a:hover {
+            color: var(--cream);
+        }
+
+
+/* ═══════════════════════════════════════════════════════════
+   13. FOOTER
+   ═══════════════════════════════════════════════════════════
+   The deepest-toned section (bark-deep), anchoring the page.
+   Contents are centered in a flex column:
+     1. Logo wordmark
+     2. Horizontal nav links
+     3. Copyright line
+   ═══════════════════════════════════════════════════════════ */
+#site-footer {
+    background-color: var(--bark-deep);
+    padding: var(--space-lg) var(--space-lg);
+}
+
+.footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+}
+
+/* Footer logo wordmark — larger than nav links for hierarchy */
+.footer-logo {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+}
+
+    .footer-logo em {
+        color: var(--warm-tan); /* accent the tagline portion */
+    }
+
+/* Horizontal nav row — wraps to multiple rows on narrow screens */
+#site-footer nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md); /* row-gap  column-gap */
+    justify-content: center;
+}
+
+/* Footer links at reduced opacity to create visual hierarchy
+   below the logo; full opacity on hover for discoverability */
+#site-footer nav a {
+    color: rgba(245,240,232,0.6);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-family: var(--font-display);
+    transition: color var(--t-fast);
+}
+
+    #site-footer nav a:hover {
+        color: var(--cream);
+    }
+
+/* Copyright line — lowest opacity, smallest size */
+.footer-copy {
+    color: rgba(245,240,232,0.4);
+    font-size: 0.83rem;
+    max-width: unset; /* override the 65ch global p rule */
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   14. SCROLL-REVEAL ANIMATIONS
+   ═══════════════════════════════════════════════════════════
+   Elements decorated with .scroll-reveal start invisible
+   and translated 28px downward. When they enter the viewport,
+   script.js's IntersectionObserver adds .is-visible, which
+   transitions them to full opacity at their natural position.
+
+   For grouped elements (e.g. three cards), the JS adds inline
+   transition-delay values (100ms, 200ms, 300ms…) to stagger
+   the reveals so cards don't all pop in simultaneously.
+
+   Note: Users who prefer reduced motion will still see a
+   state change (the element appears) but without animation
+   if a prefers-reduced-motion media query is added.
+   ═══════════════════════════════════════════════════════════ */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
+}
+
+    /* Terminal state — both properties transition to their natural values */
+    .scroll-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+/* ═══════════════════════════════════════════════════════════
+   15. RESPONSIVE — TABLET  (max-width: 900px)
+   ═══════════════════════════════════════════════════════════
+   Adjustments for viewports ≤900px (typical tablet portrait
+   and most landscape phones).
+
+   Key changes:
+     • Hamburger button appears; nav becomes a slide-down drawer.
+     • Cards grid: 3 columns → 2 columns.
+     • Gallery grid: 3 columns → 2 columns.
+     • About: side-by-side layout → stacked (SVG above text).
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+
+    /* Show the hamburger button (hidden on desktop) */
+    .hamburger {
+        display: flex;
+    }
+
+    /* ── Off-canvas Mobile Nav Drawer ──────────────────────── */
+    #main-nav {
+        /*
+      Slides down from directly under the header.
+      Hidden state: translated fully out of view (-100% upward)
+      and invisible. pointer-events:none prevents accidental
+      taps while hidden.
+    */
+        position: fixed;
+        top: var(--header-h); /* start exactly at header bottom */
+        left: 0;
+        right: 0;
+        background-color: var(--cream);
+        border-bottom: 2px solid var(--sawdust);
+        padding: var(--space-sm) var(--space-lg);
+        box-shadow: var(--shadow-md);
+        /* Hidden state — off-screen above, invisible */
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform var(--t-mid) var(--ease-out), opacity var(--t-mid) var(--ease-out);
+    }
+
+        /* Visible state — JS adds .is-open to #main-nav on hamburger click */
+        #main-nav.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Stack links vertically inside the drawer */
+        #main-nav ul {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-xs);
+        }
+
+        /* Slightly larger touch targets for finger navigation */
+        #main-nav a {
+            font-size: 1.1rem;
+            padding: 0.4rem 0;
+        }
+
+    /* Cards: 3 columns → 2 columns */
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Gallery: 3 columns → 2 columns */
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* About: side-by-side → single column stack */
+    .about-inner {
+        grid-template-columns: 1fr;
+    }
+
+    /* Move the graphic above the text when stacked */
+    .about-graphic {
+        order: -1;
+    }
+
+    /* Smaller blade SVG in stacked layout */
+    .blade-svg {
+        max-width: 140px;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   16. RESPONSIVE — MOBILE  (max-width: 600px)
+   ═══════════════════════════════════════════════════════════
+   Tighter adjustments for viewports ≤600px (phones).
+   Builds on top of the tablet rules above (both apply on
+   mobile screens since 600px < 900px).
+
+   Key changes:
+     • Reduce spacing tokens to recover vertical room.
+     • Cards and gallery: collapse to single column.
+     • Hero buttons and newsletter form: stack vertically.
+     • Header inner padding tightens to save horizontal space.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+
+    /* Reduce spacing at mobile scale — these override the
+     :root values locally within this media query. */
+    :root {
+        --space-lg: 1.5rem; /* 24px instead of 40px */
+        --space-xl: 2.5rem; /* 40px instead of 64px */
+        --space-xxl: 3.5rem; /* 56px instead of 96px */
+    }
+
+    /* Single column for cards and gallery on phone screens */
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Stack hero CTA buttons vertically and center them */
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Stack newsletter form fields and button vertically */
+    .newsletter-form {
+        flex-direction: column;
+        align-items: stretch; /* full-width inputs */
+    }
+
+        /* Remove the flex-grow so inputs don't try to flex in a column */
+        .newsletter-form input {
+            flex: unset;
+        }
+
+    /* Tighten header horizontal padding on small screens */
+    .header-inner {
+        padding: 0 var(--space-sm);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   17. BLOG PAGE
+   ═══════════════════════════════════════════════════════════
+   Styles specific to the blog article layout.
+   These do not affect the home page.
+
+   Structure overview:
+     .blog-hero         — full-width parchment banner with
+                          feature image, meta, and intro text
+     .blog-article      — white reading column, cream bg
+     .article-width     — 800px max-width constraint for
+                          comfortable reading line lengths
+     .drop-cap          — large decorative first letter on
+                          the opening paragraph
+     .tip-box           — highlighted aside with left border
+     .author-box        — author byline section at the bottom
+     .breadcrumb        — "Home > Blog > Article" trail at top
+   ═══════════════════════════════════════════════════════════ */
+
+/* Constrain blog content to a narrower reading width
+   (800px vs the site-wide 1100px max-width) */
+.article-width {
+    max-width: 800px;
+}
+
+/* ── Blog Hero Banner ─────────────────────────────────────── */
+.blog-hero {
+    padding-top: 120px; /* clear fixed header + extra breathing room */
+    background: var(--parchment);
+    border-bottom: 3px solid var(--sawdust);
+    text-align: center;
+}
+
+/* Feature image spans the full column width in the hero */
+.blog-feature-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+}
+
+}
+
+/* Publication date, author, reading time, etc. */
+.blog-meta {
+    color: var(--text-muted);
+    margin-bottom: var(--space-md);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Deck / intro text — larger than body, muted color */
+.blog-intro {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* ── Article Body ─────────────────────────────────────────── */
+.blog-article {
+    background: var(--cream);
+}
+
+    /* Consistent rhythm for headings and paragraphs in article copy */
+    .blog-article h2 {
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .blog-article h3 {
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        text-align: center; /* h3 sub-section titles are centered for visual variety */
+    }
+
+    .blog-article p {
+        margin-bottom: 1.5rem;
+    }
+
+/* ── Tools / Resources Section within an article ─────────── */
+.tools-section h2 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+.tools-section p {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* ── Drop Cap ─────────────────────────────────────────────── */
+/*
+  Applies a large decorative first letter to the opening
+  paragraph (typically set via a .drop-cap class on <p>).
+
+  float:left pulls the cap out of flow so subsequent
+  text wraps around it. line-height:.9 and padding-right
+  fine-tune its vertical alignment with surrounding copy.
+*/
+.drop-cap:first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-size: 4rem;
+    line-height: .9;
+    padding-right: .5rem;
+    color: var(--warm-tan);
+}
+
+/* ── Tip / Callout Box ────────────────────────────────────── */
+/*
+  Used for editor tips, pro notes, or warnings within article body.
+  Parchment background + warm-tan left border distinguishes it
+  from regular paragraph text without being visually jarring.
+*/
+.tip-box {
+    background: var(--parchment);
+    border-left: 5px solid var(--warm-tan);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-radius: var(--radius-md);
+}
+
+/* In-article bulleted list — restores browser-default bullets
+   that were removed in the global reset (Section 2) */
+.blog-list {
+    list-style: disc;
+    padding-left: 2rem;
+}
+
+/* ── Author Box ───────────────────────────────────────────── */
+/* Author bio and avatar block at the bottom of the article */
+.author-box {
+    background: var(--parchment);
+    border-top: 3px solid var(--sawdust);
+}
+
+/* ── Breadcrumb Navigation ────────────────────────────────── */
+/* "Home > Blog > Article Title" trail shown near the page top */
+.breadcrumb {
+    margin-bottom: var(--space-md);
+    font-size: .9rem;
+}
+
+    /* Separator character between breadcrumb segments (e.g. ›) */
+    .breadcrumb span {
+        margin: 0 .4rem;
+    }
