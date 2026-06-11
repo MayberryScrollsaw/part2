@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Name Sign Builder</title>
+ 
+  <link rel="stylesheet" href="signstyles.css" />
+  
+</head>
+<div id="site-header">
+    <div class="header-inner">
+        <a class="logo" aria-label="Mayberry Scrollsaw home">
+            <img src="../images/logoSVG.svg" alt="Mayberry Scrollsaw logo" class="logo-icon" />
+
+            <!-- Decorative crosshair/compass icon -->
+            <!-- Brand name — <br> splits into two lines on screen;
+             <em> italicises "Scrollsaw" via CSS               -->
+            <span class="logo-text">Mayberry<br /><em>Scrollsaw</em></span>
+
+        </a>
+    
+
+        <!-- PRIMARY NAV LINKS
+         href values are anchor IDs — they scroll to matching sections.
+         Add/remove <li> items here to change the menu.               -->
+        <nav id="main-nav" aria-label="Primary navigation">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../guides/guideHome.html">Guides</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </div><</div>
+<body>
+
+    <div class="page-wrap">
+
+        <header>
+           
+        </header>
+
+        <!-- FORM CARD -->
+        <div class="card">
+            <h2>Sign options</h2>
+            <div class="form-grid">
+
+                <div class="field full">
+                    <label for="sb-name">Sign text</label>
+                    <input type="text" id="sb-name" placeholder='e.g. "Grandpa&apos;s Shop"' value="Welcome" maxlength="40" />
+                </div>
+
+                <div class="field">
+                    <label for="sb-font">Font style</label>
+                    <select id="sb-font">
+                        <option value="Stencil-Regular">Stencil-Regular</option>
+                        <option value="Stencil-Bold">Stencil-Bold</option>
+                        <option value="Thin-Regular">Thin-Regular</option>
+                        <option value="Thin-Bold">Thin-Bold</option>
+                        <option value="Thin-Extra">Thin-Extra</option>
+                        <option value="Huge">Huge</option>
+                        <option value="Chunk">Chunk</option>
+                        <option value="South">South</option>
+
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="sb-border">Border style</label>
+                    <select id="sb-border">
+                        <option value="rect">Rectangle</option>
+                        <option value="oval">Oval</option>
+                        <option value="arch">Arch top</option>
+                        <option value="scallop">Scalloped</option>
+                        <option value="bubbles">Bubbles</option>
+                        <option value="fancy">Fancy</option>
+                        <option value="none">No border</option>
+                    </select>
+                </div>
+
+                <div class="field" style="display:none">
+                    <label for="sb-bottom">Bottom edge</label>
+                    <select id="sb-bottom">
+                        <option value="flat">Flat</option>
+                        <option value="match">Match top</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="sb-size">Sign width</label>
+                    <select id="sb-size">
+                        <option value="small">Small — 6 inches</option>
+                        <option value="medium" selected>Medium — 10 inches</option>
+                        <option value="large">Large — 14 inches</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="sb-thickness">Wood thickness</label>
+                    <select id="sb-thickness">
+                        <option value="0.25">&#188; inch</option>
+                        <option value="0.5" selected>&#189; inch</option>
+                        <option value="0.75">&#190; inch</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PREVIEW CARD -->
+        <div class="card">
+            <h2>Live preview</h2>
+            <div class="preview-area">
+                <svg id="preview-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+            <p class="preview-hint">Solid line = cut line &nbsp;|&nbsp; Dashed line = outer border guide</p>
+        </div>
+
+        <!-- INFO TILES -->
+        <div class="card">
+            <h2>Pattern info</h2>
+            <div class="info-grid">
+                <div class="info-tile">
+                    <div class="tile-label">Sign width</div>
+                    <div class="tile-value" id="info-width">—</div>
+                </div>
+                <div class="info-tile">
+                    <div class="tile-label">Sign height</div>
+                    <div class="tile-value" id="info-height">—</div>
+                </div>
+                <div class="info-tile">
+                    <div class="tile-label">Wood thickness</div>
+                    <div class="tile-value" id="info-thick">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOWNLOAD CARD -->
+        <div class="card">
+            <h2>Download pattern</h2>
+            <p style="font-size:0.9rem; color:#7a5c3a; margin-bottom:16px;">
+                The SVG file is sized in real-world inches — open in any browser or Inkscape and print at <strong>100% scale (no fit-to-page)</strong>.
+                Signs wider than 10½&Prime; automatically tile across multiple letter-size pages (landscape). Tape pages together and transfer directly onto your wood blank.
+            </p>
+            <div class="actions">
+
+                <button class="btn btn-secondary" onclick="printPreview()">&#128438; Print pattern</button>
+            </div>
+        </div>
+
+        <footer>Patterns are outline-only for scroll saw transfer &mdash; no fills, black lines on white.</footer>
+
+    </div><!-- /page-wrap -->
+    <script src="borderPaths.js"></script>
+
+    <script src="signScript.js"></script>
+</body>
+</html>

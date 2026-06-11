@@ -1,0 +1,556 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beginning Scroll Sawing</title>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FONTS
+         ──────────────────────────────────────────────────────────
+         Two typefaces are loaded from Google Fonts:
+           • Playfair Display → all headings (h1–h4, blockquotes)
+             weights used: 400 (regular), 700 (bold), 400 italic
+           • Lora → body copy, lists, captions
+             weights used: 400 (regular), 500 (medium)
+
+         HOW TO SWAP FONTS:
+           1. Visit https://fonts.google.com and pick a new pair.
+           2. Replace the href URL in the <link> below with the
+              new Google Fonts embed URL.
+           3. Update the font-family declarations in styles.css
+              (search for "Playfair Display" and "Lora").
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500&display=swap"
+          rel="stylesheet" />
+
+    <!-- ══════════════════════════════════════════════════════════
+         STYLESHEET
+         ──────────────────────────────────────────────────────────
+         All visual styles (colors, layout, typography, responsive
+         breakpoints) live in styles.css — two levels up from this
+         file (../../styles.css).
+
+         Keeping styles separate from markup makes it easier to:
+           • Update the design without touching content
+           • Reuse the same stylesheet across multiple pages
+           • Override specific rules with page-level <style> tags
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="stylesheet" href="../../styles.css" />
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SITE HEADER  (fixed / sticky navigation bar)
+         ──────────────────────────────────────────────────────────
+         Behavior:
+           • Fixed to the top of the viewport at all times
+           • Shrinks in height when the user scrolls down
+             (handled by a scroll listener in script.js that
+              toggles a CSS class — look for "scrolled" in styles.css)
+           • On mobile screens the nav links are hidden and replaced
+             by the hamburger button (see below)
+
+         EDIT POINTS:
+           • Logo text   → change the <span class="logo-text"> content
+           • Logo icon   → swap or remove the <svg> entirely
+           • Nav links   → add / remove <li> items inside the <ul>
+           • Aria labels → keep them accurate if you rename things
+    ══════════════════════════════════════════════════════════ -->
+    <header id="site-header">
+        <div class="header-inner">
+
+            <!-- ── LOGO ─────────────────────────────────────────────
+         aria-label gives screen readers the brand name since
+         the visual text is split across two lines.
+         The SVG is purely decorative (aria-hidden="true").   -->
+            <a class="logo" aria-label="Mayberry Scrollsaw home">
+                <img src="../../images/logoSVG.svg" alt="Mayberry Scrollsaw logo" class="logo-icon" />
+
+                <!-- Decorative crosshair/compass icon -->
+                <!-- Brand name — <br> splits into two lines on screen;
+             <em> italicises "Scrollsaw" via CSS               -->
+                <span class="logo-text">Mayberry<br /><em>Scrollsaw</em></span>
+
+            </a>
+
+            <!-- ─── PRIMARY NAV LINKS ─────────────────────────────
+         Each <a> href targets an anchor ID on the page
+         (e.g. href="#about" scrolls to <section id="about">)
+         or links to another HTML file.
+
+         TO ADD A LINK:   copy any <li>...</li> and update
+                          both the href and visible text.
+         TO REMOVE A LINK: delete the entire <li>...</li>.
+
+         NOTE: On mobile this <ul> is hidden by default.
+         The hamburger button below toggles a CSS class
+         ("nav-open") to show/hide it — see script.js.
+    ─────────────────────────────────────────────────────── -->
+            <nav id="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../guideHome.html">Guides</a></li>
+                    <li><a href="../../about.html">About</a></li>
+                    <li><a href="#Contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <!-- ─── MOBILE HAMBURGER BUTTON ───────────────────────
+         Visible only on small screens (controlled by styles.css).
+         Three <span> children render as the three horizontal bars.
+
+         Toggled by script.js:
+           • Sets aria-expanded="true/false" for accessibility
+           • Adds/removes a class on <nav> to show/hide the menu
+           • Animates the bars into an ✕ when open
+
+         You should only need to edit the aria-label text here.
+    ─────────────────────────────────────────────────────── -->
+            <button id="hamburger"
+                    class="hamburger"
+                    aria-label="Toggle menu"
+                    aria-expanded="false"
+                    aria-controls="main-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+    </header><!-- /site-header -->
+    <!-- ══════════════════════════════════════════════════════════
+         MAIN CONTENT
+         ──────────────────────────────────────────────────────────
+         class="blog-page" applies the page-level layout rules
+         defined in styles.css (max-width container, padding, etc.)
+         The <main> landmark helps screen readers and search engines
+         identify the primary content of the page.
+    ══════════════════════════════════════════════════════════ -->
+    <main class="blog-page">
+
+        <!-- ══════════════════════════════════════════════════════
+             ARTICLE HERO  (full-width opening banner)
+             ──────────────────────────────────────────────────────
+             Contains:
+               • Feature image   — swap src/alt to change the photo
+               • Page title (h1) — the main SEO heading; only one per page
+               • Byline          — wrapped in .blog-meta for styling
+               • Sub-headline    — uses h2 inside .blog-intro
+
+             NOTE: The empty <br /> between the title and byline is
+             a quick spacer; consider replacing with CSS margin if
+             you refactor the styles.
+        ══════════════════════════════════════════════════════ -->
+        <section class="blog-hero">
+            <div class="section-inner">
+
+                <!-- Feature image — replace src with your own photo.
+                     Always update alt text to describe the new image. -->
+                <img src="../../images/sawHands.png"
+                     alt="A scroll saw cutting an intricate wooden pattern"
+                     class="blog-feature-image" />
+
+                <h1>Beginning Scroll Sawing</h1>
+                <br />
+
+                <!-- Author byline -->
+                <div class="blog-meta"><h3>By Mayberry Scrollsaw</h3></div>
+
+                <!-- Sub-headline / article kicker -->
+                <p class="blog-intro"><h2>A Complete Beginner's Guide</h2></p>
+
+            </div>
+        </section><!-- /blog-hero -->
+        <!-- ══════════════════════════════════════════════════════
+             ARTICLE BODY
+             ──────────────────────────────────────────────────────
+             class="blog-article" sets typography for long-form
+             reading (line-height, measure, paragraph spacing).
+             class="article-width" constrains the max-width of
+             the text column for comfortable reading line length.
+
+             SECTION BREAKDOWN:
+               1. Introduction / drop cap paragraph
+               2. What Is a Scroll Saw?
+               3. Why Scroll Sawing Is Perfect for Beginners
+               4. Choosing Your First Scroll Saw
+               5. Essential Tools & Materials
+               6. Getting Started: Your First Project
+               7. Understanding Scroll Saw Blades
+               8. Safety First
+        ══════════════════════════════════════════════════════ -->
+        <article class="blog-article">
+            <div class="section-inner article-width">
+
+                <!-- ─── INTRODUCTION ──────────────────────────────
+                     class="drop-cap" applies the large decorative
+                     first letter via CSS (::first-letter pseudo-element
+                     or a targeted span — see styles.css).
+                     The <strong> on "W" is a manual fallback for
+                     browsers that don't support the CSS drop cap.
+                ─────────────────────────────────────────────────── -->
+                <p class="drop-cap">
+                    <strong> W</strong>elcome to the world of scroll sawing! If you've ever admired intricate
+                    wooden ornaments, beautiful wall art, personalized signs, or detailed puzzles
+                    and wondered how they were made, you're in the right place. Scroll sawing is
+                    one of the most rewarding woodworking hobbies because it allows anyone—from
+                    complete beginners to master craftsmen—to create amazing projects with
+                    relatively simple tools.
+                </p>
+
+
+                <!-- ─── SECTION 1: What Is a Scroll Saw? ─────────── -->
+                <h2>What Is a Scroll Saw?</h2>
+
+                <p>
+                    Scroll sawing is a woodworking technique that uses a specialized saw to cut
+                    intricate patterns and designs into wood. Unlike larger saws designed for
+                    straight cuts, a scroll saw's thin blade can turn sharply, letting you create
+                    curves, letters, shapes, and detailed artwork.
+                </p>
+
+                <!-- Pull-quote / blockquote callout.
+                     Styled in styles.css under the blockquote selector.
+                     Good for highlighting key takeaways or memorable lines. -->
+                <blockquote>
+                    <strong>
+                        "The secret to scroll sawing isn't speed.
+                        It's learning to let the blade do the work."
+                    </strong>
+                </blockquote>
+
+
+                <!-- ─── SECTION 2: Why Beginners Love It ─────────── -->
+                <h2>Why Scroll Sawing Is Perfect for Beginners</h2>
+
+                <p>
+                    Many woodworkers compare scroll sawing to drawing with wood — instead of a
+                    pencil, you're guiding a blade through the material to trace your design. One
+                    reason the craft has stayed popular for generations is its accessibility:
+                </p>
+
+                <!-- Unordered list of benefits.
+                     class="blog-list" adds custom bullet styling
+                     (see styles.css — likely uses a custom marker or
+                     padding rather than the browser default). -->
+                <ul class="blog-list">
+                    <li>Requires relatively little workshop space</li>
+                    <li>Uses affordable materials</li>
+                    <li>Produces less noise than many woodworking tools</li>
+                    <li>Creates minimal dust compared to larger machines</li>
+                    <li>Safe when used properly, and suitable for all ages with supervision</li>
+                    <li>Offers endless creative possibilities</li>
+                </ul>
+
+                <!-- Empty h2 used as a visual spacer — consider replacing
+                     with a CSS margin-top on the following <p> if refactoring. -->
+                <h2></h2>
+
+                <p>
+                    Whether your goal is making Christmas ornaments, custom signs, puzzles, toys,
+                    or heirloom-quality artwork, a scroll saw can help you get there.
+                </p>
+                <h2></h2>
+
+                <!-- ─── TIP BOX ────────────────────────────────────
+                     class="tip-box" renders a highlighted callout card
+                     (colored border, background tint, etc. — see styles.css).
+                     Use these sparingly for high-value advice.
+                     TO ADD MORE TIP BOXES: copy this entire <div> block.
+                ─────────────────────────────────────────────────── -->
+                <div class="tip-box">
+                    <strong>Mayberry Tip</strong>
+                    <p>
+                        Buy quality blades before buying expensive wood. Fresh blades make a
+                        bigger difference than most beginners realize.
+                    </p>
+                </div>
+
+
+                <!-- ─── SECTION 3: Choosing Your First Saw ───────── -->
+                <h2>Choosing Your First Scroll Saw</h2>
+
+                <p>
+                    Not all scroll saws are created equal. While it may be tempting to buy the
+                    cheapest model available, a smoother-running saw often makes learning much
+                    easier. Look for these key features:
+                </p>
+
+                <!-- Feature list — each <li> has a bolded feature name
+                     followed by a short description as plain text (not
+                     inside a nested element). The description sits directly
+                     after the closing </li> of the <strong>, which is
+                     technically invalid HTML but renders correctly in all
+                     major browsers. Consider wrapping in <p> if cleaning up. -->
+                <ul class="blog-list">
+                    <li><strong>Variable Speed Control</strong></li>
+                    Different woods and materials cut better at different speeds.
+
+                    <li><strong>Easy Blade Changes</strong></li>
+                    You'll change blades frequently, especially on detailed projects.
+
+                    <li><strong>Adjustable Table</strong></li>
+                    Allows angled cuts and bevel work as your skills improve.
+
+                    <li><strong>Low Vibration</strong></li>
+                    Less vibration means better control and more accurate cuts.
+                </ul>
+
+                <!-- h4 used here as a styled sub-note rather than a true
+                     heading hierarchy step — keep in mind for accessibility. -->
+                <p>
+                    <h4>
+                        For most beginners, a quality entry-level saw is more than enough to create
+                        impressive projects.
+                    </h4>
+                </p>
+
+
+                <!-- ─── SECTION 4: Essential Tools & Materials ────── -->
+                <h2>Essential Tools & Materials</h2>
+                <p>
+                    To get started with scroll sawing, you'll need a few basic tools and materials.
+                    Here's a quick list to help you set up your workshop:
+                </p>
+                <ul class="blog-list">
+                    <li><strong>Scroll Saw:</strong> Choose a beginner-friendly model with the features mentioned above.</li>
+                    <li><strong>Blades:</strong> Start with a variety pack of blades to experiment with different cuts.</li>
+                    <li><strong>Wood:</strong> Softwoods like pine or basswood are great for beginners.</li>
+                    <li><strong>Safety Gear:</strong> Always wear safety glasses and consider a dust mask when cutting.</li>
+                    <li><strong>Work Surface:</strong> A sturdy table or workbench to support your saw and projects.</li>
+                </ul>
+
+
+                <!-- ─── SECTION 5: Your First Project ────────────── -->
+                <h2>Getting Started: Your First Project</h2>
+                <p>
+                    A great first project is a simple wooden ornament. You can find free patterns on this site
+                    or create your own design. Start with a basic shape, like a heart or star, and
+                    practice cutting along the lines. Remember to take your time and let the blade do
+                    the work. Avoid highly detailed portraits or fretwork until you've developed confidence with basic cuts.
+                    Start simple. Good beginner projects include:
+                </p>
+
+                <!-- Beginner project suggestions list -->
+                <ul class="blog-list">
+                    <li><strong>Christmas ornaments</strong></li>
+                    <li><strong>Name plaques</strong> </li>
+                    <li><strong>Coasters</strong></li>
+                    <li><strong>Basic animal silhouettes</strong> </li>
+                    <li><strong>Simple puzzles</strong></li>
+                </ul>
+
+                <!-- Spacer heading — same pattern as above -->
+                <h2></h2>
+
+                <!-- Technique tips paragraph.
+                     Several tips are run together in one paragraph with
+                     <strong> labels acting as inline sub-headings.
+                     Consider breaking these into separate <p> tags or
+                     a <dl> definition list for better scannability. -->
+                <p>
+                    Learn to follow the line. One of the biggest beginner is focusing on the <strong>Blade</strong>.
+                    Instead, look ahead. Watch where the blade is going, not where it is. This will help you make smoother cuts,
+                    as you gain experience, you can gradually move on to more complex patterns and
+                    techniques. But in the beginning, <strong> Move Slow</strong> let the blade do the work.<strong>Turn Gradually</strong>
+                    Sharp turns are one of the most difficult cuts for beginners. To make them easier, slow down and take the turn in a series of small steps instead of trying to cut it all at once.
+                    <strong>Practice Curves</strong>, curved cuts are the foundation of most scroll saw projects. Spend time practicing different types of curves, from gentle arcs to tight circles. This will build your confidence and control with the saw.
+                </p>
+
+                <!-- Visual break — empty h1 used as large whitespace.
+                     Replace with CSS margin if refactoring. -->
+                <h1></h1>
+
+
+                <!-- ─── SECTION 6: Understanding Blades ──────────── -->
+                <h2>Understanding Scroll Saw Blades</h2>
+                <p>
+                    The <strong>blade</strong> is arguably the most important of your setup. <strong>Skip-Tooth Blades,</strong> great for beginners because they remove sawdust efficiently and cut smoothly.
+                    <strong>Reverse-Tooth Blades,</strong> help reduce tear-out on the bottom side of your project. <strong>Sprial Blades,</strong>cut in any direction but are grnerally more challenging for beginners.
+                    Many new scrollers struggel at first simply becuase they're using the wrong blade. If the cuts seen rough or difficult, try a different blade before blaming yourself.
+                </p>
+
+                <!-- Spacer -->
+                <h1></h1>
+
+
+                <!-- ─── SECTION 7: Safety First ───────────────────── -->
+                <h2>Safty First</h2>
+
+                <!-- Safety guidelines paragraph.
+                     Key rules are bolded inline. For a future update,
+                     consider converting this to a checklist-style <ul>
+                     so readers can scan rules at a glance. -->
+                <p>
+                    While scroll sawing is generally safe, it's important to follow basic safety guidelines to prevent accidents.
+                    Always wear safety glasses to protect your eyes from flying debris, and
+                    consider using a dust mask if you're cutting materials that produce a lot of dust in non-ventilated areas.
+                    Keep your fingers away from the blades path. Use good lighting to see your work clearly. Maintain proper balde
+                    tension and replace dull blades promptly. <strong>Always</strong> disconnect the saw from power when changing blades.
+                    Never force the wood through the blade; let it cut at its own pace. A safe workshop is a productive workshop.
+                </p>
+
+            </div>
+        </article><!-- /blog-article -->
+        <!-- ══════════════════════════════════════════════════════
+             AUTHOR / CLOSING SECTION
+             ──────────────────────────────────────────────────────
+             A warm sign-off that reinforces the site's brand voice.
+             class="author-box" styles this as a distinct panel
+             (background color, padding, border — see styles.css).
+
+             NOTE: The <br tag on line 2 of this section is missing
+             its closing > — this is a minor HTML typo. It renders
+             fine in browsers but should be fixed: change <br to <br />.
+        ══════════════════════════════════════════════════════ -->
+        <section class="author-box">
+            <div class="section-inner article-width">
+
+                <h2>The Best Part of Scroll Sawing</h2>
+                <br
+                <p>
+                    Scroll sawing has a unique ability to turn a simple piece of wood into something meaningful.
+                    A handcrafted ornament becomes a family tradition.
+                    A personalized sign becomes a treasured gift.
+                    A puzzle becomes a memory shared between generations.
+                    Every project teaches something new, and every cut improves your skill.
+                    Whether you're five years old standing beside your grandpa for the first time or sixty-five years old looking for a new hobby,
+                    scroll sawing offers a creative outlet that's both relaxing and rewarding.
+                    So pick a pattern, install a fresh blade, and make your first cut.
+                    Every master scroller started exactly where you are now—with a piece of wood,
+                    a simple design, and the excitement of creating something with their own hands.
+                </p>
+
+            </div>
+        </section><!-- /author-box -->
+        <!-- ══════════════════════════════════════════════════════
+             RELATED POSTS  ("More From The Workshop")
+             ──────────────────────────────────────────────────────
+             A 3-column card grid linking to other site content.
+             class="cards-grid" controls the column layout
+             (likely CSS Grid or Flexbox — see styles.css).
+
+             Each <article class="porch-card"> is one card.
+
+             CARD STRUCTURE:
+               <h3>      — card title
+               <p>       — short description / teaser
+               <a>       — call-to-action link (optional)
+
+             TO ADD A CARD: copy an entire <article class="porch-card">
+             block and update the title, description, and link.
+             TO LINK AN UNLINKED CARD: add <a href="..."> before </article>.
+        ══════════════════════════════════════════════════════ -->
+        <section class="related-posts">
+            <div class="section-inner">
+
+                <h2 class="section-title">More From The Workshop</h2>
+
+                <div class="cards-grid">
+
+                    <!-- CARD 1: Sign Pattern Builder (linked) -->
+                    <article class="porch-card">
+                        <h3>Free Sign Patterns</h3>
+                        <p>Create and Download ready-to-cut scroll saw sign patterns.</p>
+
+                        <!-- .strongFree is an empty div — likely reserved for
+                             a badge or label that hasn't been added yet. -->
+                        <div class="strongFree">
+                        </div>
+
+                        <!-- The dashes around "Free" are a visual design choice
+                             to make the link label look like a banner/ribbon.
+                             Consider replacing with a proper styled button class. -->
+                        <a href="../../signBuilder/index.html" class="card-link">----------<strong>Free</strong>-----------</a>
+                    </article>
+
+                    <!-- CARD 2: Blade Guide (not yet linked — no <a> tag) -->
+                    <article class="porch-card">
+                        <h3>Understanding Scroll Saw Blades</h3>
+                        <p>The most important tool you'll buy.</p>
+                    </article>
+
+                    <!-- CARD 3: Easy Projects (not yet linked — no <a> tag) -->
+                    <article class="porch-card">
+                        <h3>5 Easy Projects To Build Today</h3>
+                        <p>Perfect weekend projects.</p>
+                    </article>
+
+                </div>
+
+            </div>
+        </section><!-- /related-posts -->
+
+    </main><!-- /blog-page -->
+    <!-- ══════════════════════════════════════════════════════════
+         SITE FOOTER
+         ──────────────────────────────────────────────────────────
+         Four-element layout:
+           1. Brand name (.footer-logo)
+           2. Footer nav links (<nav>)
+           3. Copyright line (.footer-copy)
+              — #footer-year is an empty <span> whose text is
+                injected at runtime by script.js so the year
+                never needs manual updating.
+
+         EDIT POINTS:
+           • Brand name   → change text inside <p class="footer-logo">
+           • Nav links    → update href values as pages are built out
+           • Copyright    → update the text after the year span
+                            (the year itself updates automatically)
+
+         NOTE: There is a stray << before the Guides link — should be
+         just a single <. Fix: change <<a to <a.
+    ══════════════════════════════════════════════════════════ -->
+    <footer id="site-footer">
+        <div class="footer-inner">
+
+            <!-- Brand name with italic accent on "Scrollsaw" -->
+            <p class="footer-logo">Mayberry <em>Scrollsaw</em></p>
+
+            <!-- Footer navigation — mirrors the header nav.
+                 Update href values once the destination pages exist. -->
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><<a href="../../guides/guideHome.html">Guides</a></li><!-- NOTE: stray extra < here -->
+                    <li><a href="../../community/index.html">Community</a></li>
+                    <li><a href="../../about.html">About</a></li>
+                </ul>
+            </nav>
+
+            <!-- Copyright line.
+                 #footer-year is populated by script.js on page load
+                 using: document.getElementById('footer-year').textContent = new Date().getFullYear();
+                 You never need to manually update the year. -->
+            <p class="footer-copy">
+                &copy; <span id="footer-year"></span> Mayberry Scrollsaw.
+               
+            </p>
+
+        </div>
+    </footer><!-- /site-footer -->
+    <!-- ══════════════════════════════════════════════════════════
+         SCRIPTS
+         ──────────────────────────────────────────────────────────
+         script.js is loaded at the bottom of <body> (not in <head>)
+         so it runs after the HTML has been parsed, avoiding the
+         need for DOMContentLoaded event listeners.
+
+         What script.js handles:
+           • Header shrink-on-scroll (toggles "scrolled" CSS class)
+           • Hamburger menu toggle (mobile nav open/close)
+           • Footer year injection (#footer-year span)
+
+         If you add new interactive features, either add them to
+         script.js or create a separate file and add another <script>
+         tag here.
+    ══════════════════════════════════════════════════════════ -->
+    <script src="../../script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mayberry Scrollsaw</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500&display=swap"
+          rel="stylesheet" />
+
+    <link rel="stylesheet" href="IndexStyle.css" />
+
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 1 — HEADER / NAVIGATION BAR
+    ════════════════════════════════════════════════════════════════ -->
+    <header id="site-header">
+        <div class="header-inner">
+
+            <a class="logo" aria-label="Mayberry Scrollsaw home">
+                <img src="images/logoSVG.svg" alt="Mayberry Scrollsaw logo" class="logo-icon" />
+                <span class="logo-text">Mayberry<br /><em>Scrollsaw</em></span>
+            </a>
+
+            <nav id="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="guides/guideHome.html">Guides</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button id="hamburger"
+                    class="hamburger"
+                    aria-label="Toggle menu"
+                    aria-expanded="false"
+                    aria-controls="main-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div><!-- /.header-inner -->
+    </header>
+
+
+    <!-- ── HERO ──────────────────────────────────────────────────── -->
+    <!--
+        SPLIT HERO: Left = brand story on dark walnut background.
+        Right = free pattern tool call-out — the #1 value prop.
+        The diagonal clip-path echoes a scroll saw cutting through wood.
+    -->
+    <section id="hero" aria-label="Welcome banner">
+
+        <div class="hero-left">
+            <p class="eyebrow">Handcrafted in North Carolina</p>
+            <h1>Scroll saw pattern,<br /><em>free for everyone.</em></h1>
+            <p>
+                <strong>Making things with a scroll saw should be accessible to everyone.</strong><br />
+                Mayberry ScrollSaw was created to help hobbyists of all skill levels design, create, and build
+                projects they can be proud of. Our goal is simple: bring modern technology into the scroll sawing
+                hobby without replacing the craftsmanship that makes it special.
+                Whether you're cutting your first pattern or designing your own, you'll find tools, patterns, and
+                resources built specifically for scroll saw makers—not CNC machines or lasers.
+                We're here to help more people discover, enjoy, and share the craft of scroll sawing.
+                Welcome to the workshop.
+            </p>
+            <div class="hero-btns">
+                <a href="signBuilder/index.html" class="btn btn-primary">Make a Free Pattern</a>
+                <a href="guides/guidePages/beginningscrollsawing.html" class="btn btn-ghost">New to scroll sawing?</a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="tool-card scroll-reveal">
+                <span class="free-badge">100% Free</span>
+                <p class="eyebrow"><strong>Sign Pattern Builder</strong></p>
+                <h2>Design it.<br />Print it. Cut it.</h2>
+                <p>
+                    Type your text, pick a font, preview the cut lines —
+                    then download a print-ready pattern. No account required.
+                </p>
+                <a href="signBuilder/index.html" class="btn btn-primary">Open the Pattern Builder →</a>
+            </div>
+        </div>
+        <div class="hero-right">
+            <div class="tool-card scroll-reveal">
+                <div class="hero-right-text">
+                    <span class="free-badge">100% Free</span>
+                    <p class="eyebrow">Sign Pattern Builder</p>
+                    <h2>Design it.<br />Print it. Cut it.</h2>
+                    <p>
+                        Type your text, pick a font, preview the cut lines —
+                        then download a print-ready pattern. No account required.
+                    </p>
+                    <a href="signBuilder/index.html" class="btn btn-primary">Open the Pattern Builder →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="tool-card scroll-reveal">
+                <div class="hero-right-text">
+                    <span class="free-badge">100% Free</span>
+                    <p class="eyebrow">Sign Pattern Builder</p>
+                    <h2>Design it.<br />Print it. Cut it.</h2>
+                    <p>
+                        Type your text, pick a font, preview the cut lines —
+                        then download a print-ready pattern. No account required.
+                    </p>
+                    <a href="signBuilder/index.html" class="btn btn-primary">Open the Pattern Builder →</a>
+                </div>
+            </div>
+            <
+        </div>
+
+    </section>
+
+
+    <!-- ── FEATURES ──────────────────────────────────────────────── -->
+    <section id="features" class="section" aria-labelledby="features-heading">
+        <div class="inner">
+            <div class="section-header centered scroll-reveal">
+                <h2 id="features-heading" class="section-title">Everything in one workshop</h2>
+                <p class="section-sub">Tools, guides, and community — built for scroll saw makers, not laser cutters.</p>
+            </div>
+
+            <div class="cards-grid">
+
+                <article class="porch-card scroll-reveal" aria-labelledby="card1-title">
+                    <div class="card-icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40">
+                            <rect x="4" y="4" width="14" height="14" rx="2" />
+                            <rect x="22" y="4" width="14" height="14" rx="2" />
+                            <rect x="4" y="22" width="14" height="14" rx="2" />
+                            <rect x="22" y="22" width="14" height="14" rx="2" />
+                        </svg>
+                    </div>
+                    <h3 id="card1-title">Free Sign Patterns</h3>
+                    <p>
+                        Create and download ready-to-cut scroll saw sign patterns
+                        in seconds. Works on any printer, fits any skill level.
+                    </p>
+                    <a href="signBuilder/index.html" class="card-link">Make Patterns →</a>
+                </article>
+
+                <article class="porch-card scroll-reveal" aria-labelledby="card2-title">
+                    <div class="card-icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <rect x="6" y="4" width="28" height="34" rx="3"
+                                  stroke="currentColor" stroke-width="2.5" />
+                            <line x1="13" y1="12" x2="27" y2="12" stroke="currentColor" stroke-width="2" />
+                            <line x1="13" y1="18" x2="27" y2="18" stroke="currentColor" stroke-width="2" />
+                            <line x1="13" y1="24" x2="20" y2="24" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <h3 id="card2-title">How-To Guides</h3>
+                    <p>
+                        Blade selection, wood choice, finishing touches —
+                        plain-English tutorials for every stage of your project.
+                    </p>
+                    <a href="guides/guideHome.html" class="card-link">Read the Guides →</a>
+                </article>
+
+                <article class="porch-card scroll-reveal" aria-labelledby="card3-title">
+                    <div class="card-icon" aria-hidden="true">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <circle cx="14" cy="13" r="6" stroke="currentColor" stroke-width="2.5" />
+                            <circle cx="28" cy="13" r="6" stroke="currentColor" stroke-width="2.5" />
+                            <path d="M2 35c0-7 5.4-12 12-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M38 35c0-7-5.4-12-12-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <path d="M14 35c0-6 4.5-10 10-10s10 4 10 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 id="card3-title">Community Board</h3>
+                    <p>
+                        Share your latest project, ask a question, or just say
+                        howdy. Good people, good wood, good conversation.
+                    </p>
+                    <a href="community/index.html" class="card-link">Visit the Board →</a>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── GALLERY ────────────────────────────────────────────────── -->
+    <section id="gallery" class="section" aria-labelledby="gallery-heading">
+        <div class="inner">
+
+            <div class="section-header scroll-reveal">
+                <h2 id="gallery-heading" class="section-title">From the Workshop</h2>
+                <p class="section-sub">Recent projects straight off the saw.</p>
+            </div>
+
+            <div class="gallery-grid" id="gallery-grid">
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Bull">
+                        <img src="images/bull.jpeg" alt="Scroll-saw bull cutout" loading="lazy" />
+                    </button>
+                    <figcaption>Bull</figcaption>
+                </figure>
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Cow">
+                        <img src="images/cow.jpeg" alt="Wooden cow scroll-saw cutout" loading="lazy" />
+                    </button>
+                    <figcaption>Cow</figcaption>
+                </figure>
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Man">
+                        <img src="images/man.jpeg" alt="Scroll-saw silhouette of a man" loading="lazy" />
+                    </button>
+                    <figcaption>Man</figcaption>
+                </figure>
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Baby Cow">
+                        <img src="images/baby.jpeg" alt="Delicate baby cow cutout in oak" loading="lazy" />
+                    </button>
+                    <figcaption>Baby Cow</figcaption>
+                </figure>
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Skull and Bones">
+                        <img src="images/skullBones.jpeg" alt="Scroll-saw skull and crossbones wall art" loading="lazy" />
+                    </button>
+                    <figcaption>Skull &amp; Bones</figcaption>
+                </figure>
+
+                <figure class="gallery-item scroll-reveal">
+                    <button class="gallery-btn" aria-label="View project: Mother">
+                        <img src="images/mother.jpeg" alt="Scroll-saw mother figure cutout" loading="lazy" />
+                    </button>
+                    <figcaption>Mother</figcaption>
+                </figure>
+
+            </div>
+
+            <div class="gallery-cta scroll-reveal">
+                <a href="#" class="btn btn-primary">See the Full Gallery</a>
+            </div>
+
+        </div>
+
+        <!-- LIGHTBOX — IDs must match script.js -->
+        <div id="lightbox" class="lightbox"
+             role="dialog" aria-modal="true" aria-label="Image viewer"
+             hidden>
+            <button id="lightbox-close" class="lightbox-close" aria-label="Close image viewer">✕</button>
+            <img id="lightbox-img" src="" alt="" />
+            <p id="lightbox-caption" class="lightbox-caption"></p>
+        </div>
+
+    </section>
+
+
+    <!-- ── ABOUT ─────────────────────────────────────────────────── -->
+    <section id="about" class="section" aria-labelledby="about-heading">
+        <div class="inner about-inner">
+
+            <div class="about-graphic scroll-reveal" aria-hidden="true">
+                <img src="images/logoSVG01.svg" alt="Mayberry Scrollsaw logo" class="logo-pic" />
+
+            </div>
+
+            <div class="about-text scroll-reveal">
+                <h2 id="about-heading" class="section-title">About the Shop</h2><br />
+                <blockquote class="about-quote">
+                    "A piece of wood, a simple pattern, and a scroll saw — that's all it takes."
+                </blockquote>
+                <p>
+                    Woodworking can feel expensive and intimidating when you're starting out.
+                    We're working to change that with free tools that let anyone design their
+                    own patterns — whether they've been scroll sawing for twenty years or just
+                    unboxed their first saw.
+                </p>
+                <p>
+                    The lessons a scroll saw teaches — patience, creativity, problem solving,
+                    pride in a finished project — are worth passing on. That's the Mayberry way.
+                </p>
+                <a href="about.html" class="btn btn-secondary">Read Our Story</a>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ── CONTACT / NEWSLETTER ──────────────────────────────────── -->
+    <section id="contact" class="section" aria-labelledby="contact-heading">
+        <div class="inner">
+            <div class="contact-inner scroll-reveal">
+
+                <h2 id="contact-heading" class="section-title">Stay in the loop</h2>
+                <p class="section-sub">
+                    New patterns, guides, and community news —
+                    delivered to your mailbox once a month.
+                </p>
+
+                <form id="newsletter-form" class="newsletter-form" novalidate>
+                    <label for="nl-name" class="sr-only">Your first name</label>
+                    <input type="text" id="nl-name" name="name"
+                           placeholder="Your first name"
+                           autocomplete="given-name" required />
+
+                    <label for="nl-email" class="sr-only">Your email address</label>
+                    <input type="email" id="nl-email" name="email"
+                           placeholder="Your email address"
+                           autocomplete="email" required />
+
+                    <button type="submit" class="btn btn-primary">Join the Newsletter</button>
+                </form>
+
+                <p id="nl-success" class="nl-success" hidden>
+                    Well, how about that! You're on the list. See you next month. 🪵
+                </p>
+
+                <p class="contact-note">
+                    No spam, no fuss — just good scroll-saw talk.
+                    <a href="#">Unsubscribe anytime.</a>
+                </p>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── FOOTER ────────────────────────────────────────────────── -->
+    <footer id="site-footer">
+        <div class="footer-inner">
+
+            <p class="footer-logo">Mayberry <em>Scrollsaw</em></p>
+
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="signBuilder/index.html">Patterns</a></li>
+                    <li><a href="guides/guideHome.html">Guides</a></li>
+                    <li><a href="community/index.html">Community</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+
+            <p class="footer-copy">
+                &copy; <span id="footer-year"></span> Mayberry Scrollsaw.
+            </p>
+
+        </div>
+    </footer>
+
+
+    <script>
+        // ── HEADER SHRINK ────────────────────────────────────────
+        const header = document.getElementById('site-header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('shrunk', window.scrollY > 60);
+        }, { passive: true });
+
+        // ── HAMBURGER ────────────────────────────────────────────
+        const hamburger = document.getElementById('hamburger');
+        const mainNav = document.getElementById('main-nav');
+        hamburger.addEventListener('click', () => {
+            const open = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', String(!open));
+            mainNav.classList.toggle('open', !open);
+        });
+        // Close nav when a link is clicked
+        mainNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.setAttribute('aria-expanded', 'false');
+                mainNav.classList.remove('open');
+            });
+        });
+
+        // ── SCROLL REVEAL ─────────────────────────────────────────
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+        // ── GALLERY LIGHTBOX ──────────────────────────────────────
+        const lightbox = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightbox-img');
+        const lbCaption = document.getElementById('lightbox-caption');
+        const lbClose = document.getElementById('lightbox-close');
+
+        document.querySelectorAll('.gallery-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const img = btn.querySelector('img');
+                lbImg.src = img.src;
+                lbImg.alt = img.alt;
+                lbCaption.textContent = btn.closest('figure').querySelector('figcaption').textContent;
+                lightbox.removeAttribute('hidden');
+                lbClose.focus();
+            });
+        });
+
+        function closeLightbox() { lightbox.setAttribute('hidden', ''); }
+        lbClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+        // ── NEWSLETTER FORM ───────────────────────────────────────
+        document.getElementById('newsletter-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('nl-name').value.trim();
+            const email = document.getElementById('nl-email').value.trim();
+            if (!name || !email) return;
+            e.target.hidden = true;
+            document.getElementById('nl-success').removeAttribute('hidden');
+        });
+
+        // ── FOOTER YEAR ───────────────────────────────────────────
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
+
+</body>
+</html>

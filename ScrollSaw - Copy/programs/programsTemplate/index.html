@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  ScrollSaw Designer — index.html                                ║
+  ║  Foundation layer for a scroll saw pattern design program       ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  FILE STRUCTURE OVERVIEW                                        ║
+  ║  ─────────────────────────────────────────────────────────────  ║
+  ║  index.html  → Page structure, all UI elements, loads files     ║
+  ║  styles.css  → All visual styling, colors, layout, fonts        ║
+  ║  app.js      → All logic: grid drawing, zoom, pan, tools        ║
+  ║                                                                  ║
+  ║  HOW IT ALL CONNECTS                                            ║
+  ║  ─────────────────────────────────────────────────────────────  ║
+  ║  1. The <canvas id="work-canvas"> is where everything draws.    ║
+  ║     app.js grabs this element and renders the grid onto it.     ║
+  ║                                                                  ║
+  ║  2. The sidebar inputs (width, height, grid spacing, zoom)      ║
+  ║     are wired in app.js via addEventListener("change").         ║
+  ║     Changing a value → updates state → redraws grid.           ║
+  ║                                                                  ║
+  ║  3. Tool buttons (#btn-select, #btn-draw, #btn-erase) call      ║
+  ║     ToolManager.activate("toolname") in app.js.                 ║
+  ║                                                                  ║
+  ║  4. Status bar spans are updated by app.js whenever state       ║
+  ║     changes (tool, work area size, grid spacing).               ║
+  ║                                                                  ║
+  ║  TO ADD A NEW SIDEBAR CONTROL                                   ║
+  ║  ─────────────────────────────────────────────────────────────  ║
+  ║  1. Add an <input> or <select> here with a unique id.           ║
+  ║  2. In app.js, grab it: const el = document.getElementById()   ║
+  ║  3. Add: el.addEventListener("change", () => { ... })           ║
+  ║  4. Update state and call GridRenderer.draw()                   ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scroll Saw Designer — Work Area Grid</title>
+
+    <!-- All styles are in styles.css. See that file for layout/color notes. -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════
+         HEADER BAR
+         Contains: app title + toolbar buttons
+         Buttons are wired in app.js near the
+         bottom under "CONTROL EVENTS"
+         ═══════════════════════════════════════ -->
+    <header class="app-header">
+
+        <!-- Brand / Title -->
+        <div class="header-brand">
+            <span class="brand-icon">⚙</span>
+            <div>
+                <h1>ScrollSaw Designer</h1>
+                <p class="subtitle">Work Area Grid &mdash; v1.0</p>
+            </div>
+        </div>
+
+        <!-- Tool buttons — wired to ToolManager.activate() in app.js -->
+        <nav class="header-tools">
+            <!-- id="btn-select" → ToolManager.activate('select') -->
+            <button class="tool-btn active" id="btn-select" title="Select / Pan (Alt+drag or middle mouse)">&#9654;</button>
+
+            <!-- id="btn-draw" → ToolManager.activate('draw')
+                 Click to add points, double-click to finish path,
+                 right-click to cancel. Logic in app.js mousedown/dblclick. -->
+            <button class="tool-btn" id="btn-draw" title="Draw Path (click=point, dbl=finish, right=cancel)">&#9998;</button>
+
+            <!-- id="btn-erase" → ToolManager.activate('erase') — STUB, ready for logic -->
+            <button class="tool-btn" id="btn-erase" title="Erase Path (stub — add hit detection in app.js)">&#9003;</button>
+
+            <!-- id="btn-clear" → clears ALL paths via PathLayer.clear() -->
+            <button class="tool-btn danger" id="btn-clear" title="Clear All Drawn Paths">&#10005;</button>
+        </nav>
+    </header>
+
+
+    <!-- ═══════════════════════════════════════
+         MAIN LAYOUT
+         Two-column: sidebar (left) + canvas (right)
+         CSS handles the flex layout in styles.css
+         under ".app-body"
+         ═══════════════════════════════════════ -->
+    <main class="app-body">
+
+        <!-- ─────────────────────────────────────
+             LEFT SIDEBAR
+             All inputs here update state in app.js
+             and trigger a GridRenderer.draw() call
+             ───────────────────────────────────── -->
+        <aside class="sidebar">
+
+            <!-- WORK AREA SIZE PANEL
+                 Controls: workWidth, workHeight (in inches)
+                 In app.js these map to state.workWidth / state.workHeight
+                 Changing these redraws the grid rectangle on the canvas -->
+            <section class="panel">
+                <h2 class="panel-title">Work Area</h2>
+
+                <!-- Width input → state.workWidth in app.js -->
+                <label class="field-label">
+                    Width (in)
+                    <input class="field-input" type="number" id="wa-width"
+                           value="12" min="1" max="96" step="0.5" />
+                </label>
+
+                <!-- Height input → state.workHeight in app.js -->
+                <label class="field-label">
+                    Height (in)
+                    <input class="field-input" type="number" id="wa-height"
+                           value="12" min="1" max="96" step="0.5" />
+                </label>
+
+
+                <!-- GRID SETTINGS
+                     Grid Spacing = distance between minor grid lines, in inches
+                     Major Every  = how many minor lines between bold major lines
+                     Both update state and trigger GridRenderer.draw() -->
+                <h2 class="panel-title" style="margin-top:1.4rem;">Grid</h2>
+
+                <!-- Grid spacing → state.gridSpacing in app.js -->
+                <label class="field-label">
+                    Grid Spacing (in)
+                    <select class="field-input" id="grid-spacing">
+                        <option value="0.25">¼ inch</option>
+                        <option value="0.5" selected>½ inch</option>
+                        <option value="1">1 inch</option>
+                        <option value="2">2 inches</option>
+                    </select>
+                </label>
+
+                <!-- Major line interval → state.majorEvery in app.js
+                     e.g. "4" means every 4th minor line is drawn as a major line -->
+                <label class="field-label">
+                    Major Line Every
+                    <select class="field-input" id="major-every">
+                        <option value="2">2 minor lines</option>
+                        <option value="4" selected>4 minor lines</option>
+                        <option value="8">8 minor lines</option>
+                    </select>
+                </label>
+
+
+                <!-- ZOOM CONTROLS
+                     +/- buttons call applyZoom() in app.js
+                     Zoom label (#zoom-label) is updated by updateZoomLabel()
+                     You can also scroll the mouse wheel on the canvas to zoom -->
+                <label class="field-label">
+                    Zoom
+                    <div class="zoom-row">
+                        <!-- calls applyZoom(-ZOOM_STEP) in app.js -->
+                        <button class="zoom-btn" id="zoom-out">&#8722;</button>
+                        <span class="zoom-val" id="zoom-label">100%</span>
+                        <!-- calls applyZoom(+ZOOM_STEP) in app.js -->
+                        <button class="zoom-btn" id="zoom-in">&#43;</button>
+                    </div>
+                </label>
+
+                <!-- Fit to Window → calls fitToWindow() in app.js
+                     Scales + centers the work area in the visible canvas -->
+                <button class="action-btn" id="btn-fit">Fit to Window</button>
+            </section>
+
+
+            <!-- CURSOR POSITION PANEL
+                 Updated on every mousemove event in app.js.
+                 Displays the cursor position in inches relative
+                 to the top-left corner of the work area (origin). -->
+            <section class="panel">
+                <h2 class="panel-title">Cursor Position</h2>
+
+                <!-- Updated by: elCursorX.textContent = ip.x.toFixed(3) + '"' -->
+                <div class="coord-row">
+                    <span class="coord-label">X</span>
+                    <span class="coord-val" id="cursor-x">0.000&Prime;</span>
+                </div>
+
+                <!-- Updated by: elCursorY.textContent = ip.y.toFixed(3) + '"' -->
+                <div class="coord-row">
+                    <span class="coord-label">Y</span>
+                    <span class="coord-val" id="cursor-y">0.000&Prime;</span>
+                </div>
+            </section>
+
+
+            <!-- DEVELOPER NOTES PANEL
+                 Informational only — describes what to build next.
+                 Safe to remove or replace with a pattern library panel, etc. -->
+            <section class="panel note-panel">
+                <h2 class="panel-title">&#9432; Build On Top Of This</h2>
+                <p>
+                    This canvas grid is the <strong>foundation layer</strong>.
+                    Suggested next features to implement:
+                </p>
+                <ul>
+                    <li>SVG path import &amp; display (add to PathLayer in app.js)</li>
+                    <li>Pattern library browser (new sidebar panel + data file)</li>
+                    <li>Cut-line color coding (extend PathLayer path objects)</li>
+                    <li>Blade kerf compensation (offset paths by kerf width)</li>
+                    <li>G-code / DXF / SVG export (new ExportEngine in app.js)</li>
+                    <li>Snap-to-grid (SnapEngine stub already in app.js)</li>
+                    <li>Shape tools: circle, rectangle, arc (new tools in ToolManager)</li>
+                    <li>Undo / Redo stack (wrap PathLayer mutations)</li>
+                </ul>
+            </section>
+
+        </aside><!-- end .sidebar -->
+        <!-- ─────────────────────────────────────
+             CANVAS WRAPPER + CANVAS
+             The wrapper div fills remaining space.
+             The canvas inside it is sized to match
+             the wrapper by resizeCanvas() in app.js.
+
+             All grid drawing happens on #work-canvas
+             via the 2D canvas API in app.js.
+
+             Mouse events (mousemove, mousedown, wheel)
+             are attached to #work-canvas in app.js.
+             ───────────────────────────────────── -->
+        <div class="canvas-wrapper" id="canvas-wrapper">
+            <!--
+              #work-canvas: The main drawing surface.
+              - Sized dynamically by resizeCanvas() in app.js
+              - Grid drawn by GridRenderer.draw()
+              - Paths drawn by PathLayer.draw()
+              - Mouse events wired in app.js
+            -->
+            <canvas id="work-canvas"></canvas>
+        </div>
+
+    </main><!-- end .app-body -->
+    <!-- ═══════════════════════════════════════
+         STATUS BAR (bottom of screen)
+         These spans are updated by app.js:
+           #status-tool → ToolManager.activate()
+           #status-size → updateStatus()
+           #status-grid → updateStatus()
+         ═══════════════════════════════════════ -->
+    <footer class="status-bar">
+        <span id="status-tool">Tool: Select</span>
+        <span id="status-size">Work Area: 12&Prime; &times; 12&Prime;</span>
+        <span id="status-grid">Grid: ½&Prime;</span>
+        <span class="status-credit">ScrollSaw Designer — Scroll Saw Program Foundation</span>
+    </footer>
+
+
+    <!--
+      app.js loaded at end of body so all DOM elements above exist
+      before the JS tries to getElementById() them.
+      All logic lives in app.js — do not inline scripts here.
+    -->
+    <script src="app.js"></script>
+</body>
+</html>

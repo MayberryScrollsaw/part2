@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+    <!-- ╔══════════════════════════════════════════════════════════╗
+         ║  PAGE TITLE                                              ║
+         ║  Shown in the browser tab and used by search engines.    ║
+         ║  Format: "Page Name — Site Name" helps with SEO and      ║
+         ║  makes it easy to identify tabs when multiple are open.  ║
+         ╚══════════════════════════════════════════════════════════╝ -->
+    <title>How-To Guides — Mayberry Scrollsaw</title>
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         FONTS  (Google Fonts — loaded before the stylesheet)
+         ──────────────────────────────────────────────────────────
+         Two font families are used across the whole site:
+           • Playfair Display → headings  (regular 400, bold 700, italic)
+           • Lora             → body copy (regular 400, medium 500)
+
+         HOW TO SWAP FONTS:
+           1. Visit fonts.google.com and choose replacements.
+           2. Copy the new <link> tag Google provides.
+           3. Paste it here, replacing the href below.
+           4. In ../styles.css, update every font-family declaration
+              that references "Playfair Display" or "Lora".
+
+         WHY TWO PRECONNECT TAGS?
+           The first opens the TCP connection to Google's API host.
+           The second (crossorigin) handles the font-file CDN host,
+           which requires a separate CORS-enabled connection.
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500&display=swap"
+          rel="stylesheet" />
+
+
+    <!-- ══════════════════════════════════════════════════════════
+         STYLESHEET
+         ──────────────────────────────────────────────────────────
+         NOTE: This page lives inside the /guides/ sub-folder, so
+         the path goes one level up ("../") to reach styles.css
+         in the root directory.
+
+         If you ever move this file, update the href accordingly:
+           • Same folder as index.html → href="styles.css"
+           • One folder deep           → href="../styles.css"
+           • Two folders deep          → href="../../styles.css"
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="stylesheet" href="../styles.css" />
+
+</head>
+
+<body>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 1 — HEADER / NAVIGATION BAR
+         ────────────────────────────────────────────────────────────────
+         Identical in structure to the header on the root index.html.
+         The header is fixed to the top of the viewport at all times.
+         script.js adds a "shrunk" class once the user scrolls past ~60px,
+         which can be used in styles.css to reduce the header's height.
+
+         STRUCTURE OVERVIEW:
+           #site-header
+             └── .header-inner          (max-width wrapper + flex container)
+                   ├── .logo            (brand mark — SVG icon + text)
+                   ├── #main-nav        (primary navigation links)
+                   └── #hamburger       (mobile menu toggle button)
+
+         PATH NOTE:
+           Links on this page must go up one level ("../") to reach
+           root-level pages (e.g., "../index.html").
+           Links within the guides section stay relative (e.g., "guidePages/...").
+
+         HOW TO ADD A NAV LINK:
+           Copy any <li> inside the <ul> in #main-nav and update the
+           text and href.
+    ════════════════════════════════════════════════════════════════ -->
+    <header id="site-header">
+        <div class="header-inner">
+
+            <!-- ── LOGO ─────────────────────────────────────────────
+                 aria-label gives screen readers the brand name since
+                 the visual text is split across two lines.
+                 The SVG is purely decorative (aria-hidden="true").
+                 href="#" scrolls to the top of the current page;
+                 update to "../index.html" if you want it to go home. -->
+            <a href="#" class="logo" aria-label="Mayberry Scrollsaw home">
+
+               
+
+                <!-- Brand name — <br> splits into two lines on screen;
+                     <em> italicises "Scrollsaw" via CSS               -->
+                <span class="logo-text">Mayberry<br /><em>Scrollsaw</em></span>
+
+            
+
+
+            <!-- ── PRIMARY NAVIGATION ───────────────────────────────
+                 aria-label distinguishes this nav from the footer nav.
+                 "Home" links up one level to the root index.
+                 "Guides" points to guides/index.html — which is THIS
+                 page, so this link would reload the current page.
+                 Consider marking it aria-current="page" for clarity.  -->
+            <nav id="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="guides/index.html">Guides</a></li><!-- NOTE: currently points to guides/guides/index.html — may need updating -->
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+
+            <!-- ── HAMBURGER BUTTON (mobile only) ───────────────────
+                 Visible only on narrow screens (controlled via CSS).
+                 script.js toggles aria-expanded and adds/removes an
+                 "open" class on #main-nav to show/hide the mobile menu.
+                 The three <span> elements are the three horizontal bars;
+                 CSS animates them into an ✕ when the menu is open.      -->
+            <button id="hamburger"
+                    class="hamburger"
+                    aria-label="Toggle menu"
+                    aria-expanded="false"
+                    aria-controls="main-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div><!-- /.header-inner -->
+    </header>
+
+
+    <!-- ════════════════════════════════════════════════════════════════
+         SECTION 2 — HERO (full-viewport welcome banner)
+         ────────────────────────────────────────────────────────────────
+         Spans the full height of the browser window on load.
+         A wood-grain texture is applied in CSS — see ../styles.css #hero.
+
+         FADE-IN ANIMATION:
+           script.js adds the class "visible" to .hero-content shortly
+           after the page loads, triggering a CSS transition defined in
+           styles.css for the ".reveal" selector.
+
+         EDIT GUIDE:
+           ┌─────────────────────────────┬──────────────────────────────┐
+           │ What you want to change     │ Where to find it             │
+           ├─────────────────────────────┼──────────────────────────────┤
+           │ Small eyebrow text          │ <p class="hero-eyebrow">     │
+           │ Main headline               │ <h1> — update text & <span>  │
+           │ Coloured accent text        │ <span class="accent">        │
+           │ Body paragraph              │ <p class="hero-sub">         │
+           │ Button 1 label / URL        │ .btn-primary   (1st <a>)     │
+           │ Button 2 label / URL        │ .btn-secondary (2nd <a>)     │
+           │ Button 3 label / URL        │ .btn-third     (3rd <a>)     │
+           └─────────────────────────────┴──────────────────────────────┘
+
+         NOTE: Leave <p class="hero-eyebrow"> empty to hide it entirely.
+         The element stays in the DOM so you can add eyebrow text later
+         without touching the HTML structure.
+
+         PATH NOTE:
+           Button hrefs on this page navigate relative to /guides/:
+             • guidePages/... → goes deeper into the guides sub-folder
+             • ../community/  → goes up one level then into community/
+    ════════════════════════════════════════════════════════════════ -->
+    <section id="hero" aria-label="Welcome banner">
+        <div class="hero-content reveal">
+
+            <!-- EYEBROW — small label above the headline; currently blank.
+                 Example: "Beginner Friendly" or "Updated Monthly"          -->
+            <p class="hero-eyebrow"></p>
+
+            <!-- MAIN HEADLINE
+                 The <span class="accent"> applies the site's accent color
+                 (defined as --accent in ../styles.css) to the sub-title.
+                 The &amp; is the HTML entity for the "&" character —
+                 required to keep the markup valid.                          -->
+            <h1>Guides<br /><span class="accent">Tips  &amp;  Tricks</span></h1>
+
+            <!-- HERO BODY COPY — keep this concise; visitors scan quickly.
+                 The leading <br> adds a blank line of breathing room above
+                 the paragraph text.                                         -->
+            <p class="hero-sub">
+                <br>
+                Welcome to the world of scroll sawing! If you've ever admired intricate wooden ornaments,
+                beautiful wall art, personalized signs, or detailed puzzles and wondered how they were made,
+                you're in the right place. Scroll sawing is one of the most rewarding woodworking hobbies because
+                it allows anyone—from complete beginners to master craftsmen—to create amazing projects with relatively simple tools.
+            </p>
+
+            <!-- CALL-TO-ACTION BUTTONS
+                 Three buttons with different visual weights (primary >
+                 secondary > third).  Update the href and label text only;
+                 do not change the class names without also updating styles.css.
+
+                 Button 1 → deep-links into the guides sub-folder
+                 Button 2 → navigates up one level to the community page
+                 Button 3 → smooth-scrolls to an #Articles anchor on
+                            this page (add id="Articles" to that section) -->
+            <div class="hero-buttons">
+                <a href="guidePages/beginningscrollsawing.html" class="btn btn-primary">
+                    Beginning Scroll Sawing
+                </a>
+                <a href="../community/index.html" class="btn btn-secondary">
+                    Join the Community
+                </a>
+                <a href="guideHome.html" class="btn btn-third">
+                    Guides
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════════════
+         FOOTER
+         ────────────────────────────────────────────────────────────────
+         Simple three-row footer: brand name, nav links, copyright.
+         This footer is slightly different from the root index.html
+         version — it has fewer links and all hrefs go up one level.
+
+         STRUCTURE:
+           #site-footer
+             └── .footer-inner
+                   ├── p.footer-logo        (brand name)
+                   ├── nav[aria-label]      (three footer links)
+                   └── p.footer-copy        (copyright line)
+
+         COPYRIGHT YEAR:
+           The current year is injected by script.js into #footer-year,
+           so it stays accurate automatically — no manual updates needed.
+           Make sure script.js is loaded on this page (see NOTE below).
+
+         PATH NOTE:
+           All hrefs go up one level ("../") since this page lives in
+           the /guides/ sub-folder.
+
+         ⚠️  MISSING SCRIPT TAG:
+           The root index.html loads <script src="script.js"> at the
+           bottom of <body>.  This page does NOT include that tag, which
+           means #footer-year will be blank and the hamburger menu won't
+           work.  To fix, add before </body>:
+             <script src="../script.js"></script>
+    ════════════════════════════════════════════════════════════════ -->
+    <footer id="site-footer">
+        <div class="footer-inner">
+
+            <!-- Brand name — matches the logo text in the header -->
+            <p class="footer-logo">Mayberry <em>Scrollsaw</em></p>
+
+            <!-- Footer nav — aria-label distinguishes from #main-nav -->
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <!-- NOTE: "Patterns" and "Guides" links from the root footer
+                         are omitted here — add them back if needed -->
+                    <li><a href="../community/index.html">Community</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </nav>
+
+            <!-- Copyright — #footer-year is populated by script.js on load.
+                 Will show blank until script.js is added to this page.    -->
+            <p class="footer-copy">
+                &copy; <span id="footer-year"></span> Mayberry Scrollsaw.
+                Made with sawdust &amp; good intentions.
+            </p>
+
+        </div>
+    </footer>
+
+
+    <!-- ════════════════════════════════════════════════════════════════
+         MISSING: JAVASCRIPT
+         ────────────────────────────────────────────────────────────────
+         The root index.html loads script.js at the bottom of <body>.
+         This page is missing that tag.  Without it:
+           • #footer-year stays blank (shows no year)
+           • Hamburger menu won't open on mobile
+           • .scroll-reveal elements won't animate in
+           • Gallery lightbox won't function (if added later)
+
+         TO FIX — add this line just before </body>:
+           <script src="../script.js"></script>
+
+         The "../" is required because this file is inside /guides/.
+    ════════════════════════════════════════════════════════════════ -->
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ══════════════════════════════════════════════════════════
+         PAGE TITLE
+         ──────────────────────────────────────────────────────────
+         Displayed in the browser tab and used by search engines.
+         Keep it descriptive — e.g. "About | Mayberry Scrollsaw"
+         is better for SEO than just "About".
+    ══════════════════════════════════════════════════════════ -->
+    <title>Community</title>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FONTS  (Google Fonts — loaded via CDN)
+         ──────────────────────────────────────────────────────────
+         Two typefaces are loaded:
+           • Playfair Display → headings (weights 400, 700, italic)
+           • Lora             → body copy (weights 400, 500)
+
+         The two <link rel="preconnect"> tags above the font link
+         establish early connections to Google's servers, which
+         speeds up font loading noticeably on slower connections.
+
+         HOW TO SWAP FONTS:
+           1. Visit https://fonts.google.com and choose a new pair.
+           2. Replace the href URL in the third <link> below.
+           3. Update font-family values in styles.css accordingly.
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500&display=swap"
+          rel="stylesheet" />
+
+    <!-- ══════════════════════════════════════════════════════════
+         STYLESHEET
+         ──────────────────────────────────────────────────────────
+         All visual styles (colors, spacing, layout, responsive
+         breakpoints, animations) live in styles.css — one level
+         up from this file (../styles.css).
+
+         This page shares the same stylesheet as the rest of the
+         site. To add page-specific overrides without touching the
+         global file, add a <style> block here in the <head>.
+    ══════════════════════════════════════════════════════════ -->
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SITE HEADER  (fixed / sticky navigation bar)
+         ──────────────────────────────────────────────────────────
+         Behavior:
+           • Fixed to the top of the viewport at all times
+           • Shrinks in height when the user scrolls down
+             (script.js listens for the scroll event and toggles
+              a "scrolled" CSS class on this element)
+           • On mobile the nav links collapse; the hamburger button
+             appears and toggles them open/closed
+
+         EDIT POINTS:
+           • Logo text   → <span class="logo-text"> content
+           • Logo icon   → swap or remove the <svg> block
+           • Nav links   → add / remove <li> items in the <ul>
+    ══════════════════════════════════════════════════════════ -->
+    <header id="site-header">
+        <div class="header-inner">
+
+            <a class="logo" aria-label="Mayberry Scrollsaw home">
+                <img src="../images/logoSVG.svg" alt="Mayberry Scrollsaw logo" class="logo-icon" />
+                <span class="logo-text">Mayberry<br /><em>Scrollsaw</em></span>
+
+            </a>
+            <nav id="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../guides/guideHome.html">Guides</a></li>
+
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../../index.html#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+            <button id="hamburger"
+                    class="hamburger"
+                    aria-label="Toggle menu"
+                    aria-expanded="false"
+                    aria-controls="main-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+        </div>
+    </header>
+    <!-- ══════════════════════════════════════════════════════════
+         HERO SECTION  (full-viewport welcome / coming-soon banner)
+         ──────────────────────────────────────────────────────────
+         This is the first thing visitors see on the About page.
+         Currently used as a "Coming Soon" placeholder for a future
+         Community Forum feature.
+
+         Visual details (handled in styles.css under #hero):
+           • Wood-grain texture applied as a CSS background
+           • Full viewport height (100vh)
+           • Centered content layout
+
+         Animation:
+           • The inner <div class="hero-content reveal"> fades in
+             on page load — script.js adds a class or uses
+             IntersectionObserver to trigger the ".reveal" animation
+             defined in styles.css.
+
+         EDIT POINTS:
+           • Eyebrow text  → <p class="hero-eyebrow"> (empty = hidden)
+           • Main headline → <h1> and <span class="accent">
+           • Body copy     → <p class="hero-sub">
+           • Button labels → text inside each <a> tag
+           • Button URLs   → href values on each <a> tag
+           • Button styles → btn-primary / btn-secondary / btn-third
+             are defined in styles.css; swap classes to change appearance
+    ══════════════════════════════════════════════════════════ -->
+    <section id="hero" aria-label="Welcome banner">
+        <div class="hero-content reveal">
+
+            <!-- EYEBROW — small label above the main headline.
+                 Currently empty. To use it, add text between the tags,
+                 e.g. <p class="hero-eyebrow">Community</p>
+                 Leaving it empty hides it (zero-width content). -->
+            <p class="hero-eyebrow"></p>
+
+            <!-- MAIN HEADLINE
+                 <span class="accent"> can be used to apply a highlight
+                 color or underline to part of the headline — currently
+                 empty. Add text inside the span to activate it. -->
+            <h1><strong>Coming Soon</strong><br /><span class="accent"></span></h1>
+
+            <!-- HERO BODY COPY
+                 The leading <br> adds a visual gap between the headline
+                 and this paragraph. Consider replacing with CSS margin-top
+                 on .hero-sub if you refactor styles. -->
+            <p class="hero-sub">
+
+                <br>
+                If enough people are interested Mayberry ScrollSaw, and would like to see a Community Forum, we will set one up.
+
+                Welcome to the workshop.
+            </p>
+
+            <!-- HERO BUTTONS
+                 Three buttons with different visual weights:
+                   • btn-primary   — most prominent (filled/solid)
+                   • btn-secondary — medium weight (outlined or muted)
+                   • btn-third     — lightest / tertiary style
+
+                 All three styles are defined in styles.css.
+                 Reorder the <a> tags to change the visual left-to-right
+                 priority. Update href values as new pages are created.
+
+                 NOTE: href="#Articles" assumes a section with id="Articles"
+                 exists somewhere on the page or will be added later. -->
+            <div class="hero-buttons">
+                <a href="../guides/guidePages/beginningscrollsawing.html" class="btn btn-primary">Beginning Scroll Sawing</a>
+                <a href="../index.html" class="btn btn-secondary">Home</a>
+                <a href="../guides/guideHome.html" class="btn btn-third">Guides</a>
+            </div>
+
+        </div>
+
+    </section><!-- /hero -->
+    <!-- ══════════════════════════════════════════════════════════
+         SITE FOOTER
+         ──────────────────────────────────────────────────────────
+         Shared footer used across all pages of the site.
+
+         Three elements:
+           1. Brand name (.footer-logo)       — "Mayberry Scrollsaw"
+           2. Footer navigation (<nav>)       — 3 links
+           3. Copyright line (.footer-copy)   — auto-updated year
+
+         AUTO YEAR:
+           The #footer-year <span> is intentionally left empty here.
+           script.js fills it at runtime:
+             document.getElementById('footer-year').textContent
+               = new Date().getFullYear();
+           This means you never need to manually update the year.
+
+         NOTE: There is a stray extra < before the Guides <a> tag
+         (it reads <<a instead of <a). This is a copy-paste typo.
+         Browsers are forgiving and render it correctly, but it
+         should be fixed to: <li><a href="../guides/index.html">Guides</a></li>
+
+         EDIT POINTS:
+           • Brand name → text inside <p class="footer-logo">
+           • Nav links  → update href values as pages go live
+           • Copyright  → change the text after </span> if needed
+    ══════════════════════════════════════════════════════════ -->
+    <footer id="site-footer">
+        <div class="footer-inner">
+
+            <!-- Brand name — <em> italicises "Scrollsaw" to match the header logo -->
+            <p class="footer-logo">Mayberry <em>Scrollsaw</em></p>
+
+            <!-- Footer nav — 3 links (fewer than the header nav).
+                 NOTE: <<a on the Guides link is a typo — see note above. -->
+            <nav aria-label="Footer navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><<a href="../guides/guideHome.html">Guides</a></li><!-- BUG: extra < before <a -->
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </nav>
+
+            <!-- Copyright line.
+                 &copy; renders the © symbol.
+                 &amp;  renders the & symbol (required in HTML attributes/text).
+                 #footer-year is populated automatically by script.js. -->
+            <p class="footer-copy">
+                &copy; <span id="footer-year"></span> Mayberry Scrollsaw.
+                Made with sawdust &amp; good intentions.
+            </p>
+
+        </div>
+    </footer><!-- /site-footer -->
+    <!-- ══════════════════════════════════════════════════════════
+         SCRIPTS
+         ──────────────────────────────────────────────────────────
+         Loaded at the bottom of <body> (not in <head>) so the
+         script runs after the HTML is fully parsed — no need for
+         DOMContentLoaded wrappers.
+
+         script.js responsibilities on this page:
+           • Header shrink on scroll  (toggles a CSS class on #site-header)
+           • Hamburger menu toggle    (shows/hides #main-nav on mobile)
+           • Footer year injection    (fills #footer-year with current year)
+           • ".reveal" fade-in        (triggers the hero content animation)
+
+         Path is one level up (../script.js) because this file lives
+         inside a sub-folder relative to the site root.
+    ══════════════════════════════════════════════════════════ -->
+    <script src="../script.js"></script>
+
+</body>
+</html>
